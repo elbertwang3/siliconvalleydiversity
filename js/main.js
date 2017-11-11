@@ -29,8 +29,14 @@ d3.csv('data/data.csv', type, function(error, data) {
 																						percentlatino: d.value.totallatino/d.value.total, 
 																						percentasian: d.value.totalasian/d.value.total, 
 																						percentamerindian: d.value.totalamerindian/d.value.total, 
-																						percentmixed: d.value.totalmixed/d.value.total
+																						percentmixed: d.value.totalmixed/d.value.total,
+																				
 																					}}});
+	for (var i = 0; i < percentagesByCompany.length; i++) {
+		company = percentagesByCompany[i]
+		company.value.parity = -company.value.percentwhite + company.value.percentblack + company.value.percentlatino + company.value.percentasian + company.value.percentamerindian + company.value.percentmixed + 0.424 - 0.064-0.03-0.236-0.235-0.035;
+	}
+	
 	console.log(totalsByCompany);
 	console.log(percentagesByCompany);
 	dataByCompany = d3.nest()
