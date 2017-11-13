@@ -4,7 +4,7 @@ width = svg.attr("width") - margin.left - margin.right,
 height = svg.attr("height") - margin.top - margin.bottom;
 var toggles = d3.select(".container").append("div")
     .attr("class","histogram-chart-toggle-wrapper");
-
+var cut;
 
 var percentScale = d3.scaleLinear()
 .rangeRound([0, width]);
@@ -12,10 +12,13 @@ var percentScale = d3.scaleLinear()
 var parityScale = d3.scaleLinear()
 .rangeRound([0, width]);
 
+var genderColorScale = d3.scaleLinear().domain([.2,.5,.8]).range(["#2161fa","#dddddd","#ff3333"]);
+var raceColorScale = d3.scaleLinear().domain([-0.8,0,.8]).range(["#2161fa","#dddddd","#ff3333"]);
 
 
-var g = svg.append("g")
-.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var chartg = svg.append("g")
+.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+.attr("class", "chart-g");
 
 d3.csv('data/data.csv', type, function(error, data) {
 	toggles
@@ -51,9 +54,9 @@ d3.csv('data/data.csv', type, function(error, data) {
           }
           return false;
         })
-        countMin = d;
+        cut = d;
         console.log(d);
-        buildChart(d);
+        updateChart();
       });
 
 
@@ -125,26 +128,22 @@ d3.csv('data/data.csv', type, function(error, data) {
 
 	//x.domain(d3.extent(percentagesByCompany, function(d) { return d.value.percentmen; }));
 	percentScale.domain([0,1]);
-	parityScale.domain(d3.extent(percentagesByCompany, function(d) { return d.value.parity; }));
+	console.log(d3.extent(percentagesByCompany, function(d) { return d.value.parity; }));
+	//parityScale.domain(d3.extent(percentagesByCompany, function(d) { return d.value.parity; }));
+	parityScale.domain([-0.8,0.8])
 	
 	
-
-	buildChart("Gender")
-
-      
-    
-      function buildChart(toggle) {
-      
-      	var simulation = d3.forceSimulation(percentagesByCompany)
+	var simulation = d3.forceSimulation(percentagesByCompany)
       	.force("x", d3.forceX(function(d) { 
-	      	if (toggle == "Gender") {
+	      	/*if (cut == "Gender") {
 	      		return percentScale(d.value.percentmen); 
 	     	} else {
 	     		return parityScale(d.value.parity); 
-	     	}
+	     	}*/
+	     	return percentScale(d.value.percentwomen); 
 	     }).strength(1))
       .force("y", d3.forceY(height / 2))
-      .force("collide", d3.forceCollide().radius(function(d) { return circleScale(d.value.total) + 1; }))
+      .force("collide", d3.forceCollide().radius(function(d) { return circleScale(d.value.total) + 2; }))
       .stop();
 
     
@@ -155,30 +154,81 @@ d3.csv('data/data.csv', type, function(error, data) {
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(percentScale));*/
 
-   	var cell = g.append("g")
+   	var cell = chartg.append("g")
       .attr("class", "cells")
       .selectAll("g").data(percentagesByCompany)
-      .enter().append("g");
+      .enter().append("g")
+      .attr("class","swarm-cell-g");
     /*.selectAll("g").data(d3.voronoi()
         .extent([[-margin.left, -margin.top], [width + margin.right, height + margin.top]])
         .x(function(d) { return d.x; })
         .y(function(d) { return d.y; })
       .polygons(percentagesByCompany)).enter().append("g");*/
 
-      cell.append("circle")
-       .transition()
-        .duration(500)
+    var cellCircle = cell.append("circle")
+     .attr("class","swarm-circle")
       .attr("r", function(d) { 
-      	console.log(d); 
+      	//console.log(d); 
       	return circleScale(d.value.total);
       	//return 3;
       })
       .attr("cx", function(d) { return d.x; })
-      .attr("cy", function(d) { return d.y; });
+      .attr("cy", function(d) { return d.y; })
+      .style("fill", function(d) { return genderColorScale(d.value.percentwomen);})
+      .style("stroke", function(d) { return d3.color(genderColorScale(d.value.percentwomen)).darker(1);})
 
+      
+    
+      function updateChart() {
 
-      }
+      	var simulation = d3.forceSimulation(percentagesByCompany)
+          .force("x", d3.forceX(function(d) {
+           if (cut == "Gender") {
+           	console.log("getting to gender");
+	      		return percentScale(d.value.percentwomen); 
+	     	} else {
+	     		console.log("getting here");
+	     		return parityScale(d.value.parity); 
+	     	}
+          })
+          .strength(1))
+          .force("y", d3.forceY(height / 2))
+          .force("collide", d3.forceCollide().radius(function(d) { return circleScale(d.value.total) + 2; }))
+          .stop();
+
+          console.log(cellCircle);
+
+           for (var i = 0; i < 120; ++i) simulation.tick();
+        cellCircle
+        .transition()
+        .duration(500)
+        .style("opacity", 1)
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; })
+      	.attr("r", function(d){
+          	return circleScale(d.value.total);
+        })
+        .style("fill", function(d) { 
+        	if (cut == "Gender") {
+	      		return genderColorScale(d.value.percentwomen); 
+	     	} else {
+	     		console.log("getting here");
+	     		return raceColorScale(d.value.parity); 
+	     	}
+        })
+      	.style("stroke", function(d) { 
+      		if (cut == "Gender") {
+	      		return d3.color(genderColorScale(d.value.percentwomen)).darker(1); 
+	     	} else {
+	     		return d3.color(raceColorScale(d.value.parity)).darker(1); 
+	     	}
+	     
+      	})
+    }
+
 }) 
+
+
 
 
 function type(d) {
