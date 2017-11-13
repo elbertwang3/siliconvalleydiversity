@@ -17,7 +17,7 @@ var percentScale = d3.scaleLinear()
 var parityScale = d3.scaleLinear()
 .rangeRound([0, width]);
 
-var genderColorScale = d3.scaleLinear().domain([.2,.5,.8]).range(["#2161fa","#dddddd","#ff3333"]);
+var genderColorScale = d3.scaleLinear().domain([0,.5,1]).range(["#2161fa","#dddddd","#ff3333"]);
 var tickData = [0,.25,.5,.75,1];
 var raceColorScale = d3.scaleLinear().domain([-0.8,0,.8]).range(["#2161fa","#dddddd","#ff3333"]);
 
@@ -169,8 +169,12 @@ d3.csv('data/data.csv', type, function(error, data) {
       })
       .attr("cx", function(d) { return d.x; })
       .attr("cy", function(d) { return d.y; })
+       .style("opacity", 0.8)
       .style("fill", function(d) { return genderColorScale(d.value.percentwomen);})
       .style("stroke", function(d) { return d3.color(genderColorScale(d.value.percentwomen)).darker(1);})
+     .on("mouseover", function(d) {
+     	console.log(d);
+     })
 
      var cellImages = cell.append("g")
 
@@ -193,6 +197,12 @@ d3.csv('data/data.csv', type, function(error, data) {
           }
           if(d.key == "Cisco"){
             return "images/cisco-logo.svg"
+          }
+          if(d.key == "Intel"){
+            return "images/intel-logo.svg.png"
+          }
+          if(d.key == "HPE"){
+            return "images/hpe-logo.svg.png"
           }
           return null;
         })
@@ -226,7 +236,7 @@ d3.csv('data/data.csv', type, function(error, data) {
         cellCircle
         .transition()
         .duration(500)
-        .style("opacity", 1)
+
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
       	.attr("r", function(d){
@@ -247,6 +257,7 @@ d3.csv('data/data.csv', type, function(error, data) {
 	     	}
 	     
       	})
+
       	 cellImages.transition().duration(500)
 
         .attr("transform",function(d,i){
@@ -305,7 +316,6 @@ d3.csv('data/data.csv', type, function(error, data) {
 	    	.attr("class", "center-line")
 	    ticks
 	        .append("line")
-	        
 	        .style("stroke",function(d){
 	          
 	          if (cut == "Gender") {
@@ -353,6 +363,8 @@ d3.csv('data/data.csv', type, function(error, data) {
           	}
 	        })
 	        .attr("y",-9)
+	              	     .transition()
+        .delay(250)
 	        .attr("class","swarm-axis-tick-text")
 	        .style("text-anchor",function(d,i){
 	          if(i==0){
