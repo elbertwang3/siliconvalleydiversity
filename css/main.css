@@ -192,3 +192,46 @@ h5 {
     dominant-baseline: central;
     font-weight: 500;
 }
+
+.swarm-average-text {
+    font-family: 'Roboto';
+    text-anchor: middle;
+    font-size: 12px;
+    fill: black;
+    /*text-shadow: 0 2px 0 #ffffff, 2px 0 0 #ffffff, 0 -2px 0 #ffffff, -2px 0 0 #ffffff;*/
+}
+
+.swarm-average-line {
+    stroke: black;
+    stroke-width: 1.5px;
+    shape-rendering: crispEdges;
+}
+
+.swarm-average-text-label {
+    fill: #888;
+    font-size: 10px;
+    fill: #2463f9;
+    /*text-shadow: 0 1px 0 #ffffff, 1px 0 0 #ffffff, 0 -1px 0 #ffffff, -1px 0 0 #ffffff;*/
+    text-transform: uppercase;
+    font-weight: 600;
+    pointer-events: none;
+}
+
+.swarm-annnotation-line {
+    stroke: #d8d8d8;
+    stroke-width: 5px;
+}
+
+.swarm-annnotation-text {
+    text-anchor: end;
+    -webkit-transform: translateX(-10px);
+    transform: translateX(-10px);
+    dominant-baseline: middle;
+    font-family: 'Roboto';
+    font-weight: 500;
+    font-size: 14px;
+    fill: #b3b3b3;
+    /* text-shadow: 0 2px 0 #ffffff, 2px 0 0 #ffffff, 0 -2px 0 #ffffff, -2px 0 0 #ffffff; */
+    letter-spacing: .2px;
+}
+

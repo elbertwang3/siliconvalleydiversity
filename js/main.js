@@ -7,6 +7,10 @@ var toggles = d3.select(".container").append("div")
 var cut = "Gender";
 var midPoint;
 var cellImages;
+var mobile = false;
+if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+  mobile = true;
+}
 
 var viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -30,7 +34,23 @@ var chartAxis = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .attr("class","swarm-axis");
 
+
 var chartAxisContainer = chartAxis.append("g")
+
+var defs = svg.append("svg:defs")
+defs
+    .append("marker")    // This section adds in the arrows
+    .attr("id", "arrow-head")
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 0)
+    .attr("refY", 0)
+    .attr("markerWidth", 5)
+    .attr("markerHeight", 3)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M0,-5L10,0L0,5")
+    .attr("fill","#d8d8d8")
+    ;
 
 d3.csv('data/data.csv', type, function(error, data) {
 	toggles
@@ -141,8 +161,12 @@ d3.csv('data/data.csv', type, function(error, data) {
 	percentScale.domain([0,1]);
 	//parityScale.domain(d3.extent(percentagesByCompany, function(d) { return d.value.parity; }));
 	parityScale.domain([-0.8,0.8])
+
+	var womenAverage = d3.mean(percentagesByCompany, function(d) { return d.value.percentwomen})
+	var parityAverage = d3.mean(percentagesByCompany, function(d) { return d.value.parity})
 	
 	buildAxis()
+	buildAverage()
 	var simulation = d3.forceSimulation(percentagesByCompany)
       	.force("x", d3.forceX(function(d) { 
 	      
@@ -217,7 +241,7 @@ d3.csv('data/data.csv', type, function(error, data) {
  
       function updateChart() {
       	buildAxis()
-      
+      	buildAverage()
       	var simulation = d3.forceSimulation(percentagesByCompany)
           .force("x", d3.forceX(function(d) {
            if (cut == "Gender") {
@@ -272,7 +296,7 @@ d3.csv('data/data.csv', type, function(error, data) {
 	}
 	function buildAxis() {
 
-	
+		
       	if (cut == "Gender") {
       		tickData = [0,.25,.5,.75,1];
       	} else {
@@ -292,11 +316,19 @@ d3.csv('data/data.csv', type, function(error, data) {
        	
 
       	var chartAxisContainer = chartAxis.append("g")
+      	  chartAxisContainer.append("line")
+	    	.style("stroke", "#dddddd")
+	    	.attr("x1", 0)
+	    	.attr("x2", width)
+	    	.attr("y1", height/2)
+	    	.attr("y2", height/2)
+	    	.attr("class", "center-line")
       	if (cut == "Gender") {
           		midPoint = 0.5;
           	} else {
           		midPoint = 0;
           	}
+
 	    var ticks = chartAxisContainer
             .append("g")
 
@@ -307,13 +339,7 @@ d3.csv('data/data.csv', type, function(error, data) {
             .append("g")
             .attr("class","swarm-axis-tick-g");
 	    
-	    chartAxisContainer.append("line")
-	    	.style("stroke", "#dddddd")
-	    	.attr("x1", 0)
-	    	.attr("x2", width)
-	    	.attr("y1", height/2)
-	    	.attr("y2", height/2)
-	    	.attr("class", "center-line")
+	  
 	    ticks
 	        .append("line")
 	        .style("stroke",function(d){
@@ -424,6 +450,102 @@ d3.csv('data/data.csv', type, function(error, data) {
 	        });
 
 		}
+		function buildAverage(){
+
+          svg.select(".swarm-average").remove();
+          svg.select(".swarm-annnotation").remove();
+
+          var chartAnnotation = svg.append("g")
+             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+             .attr("class","swarm-annnotation")
+             ;
+           console.log("getting here");
+          if(!mobile && viewportWidth > 550){
+            var adjustWidth = 0;
+            if(viewportWidth < 650){
+              adjustWidth = 100;
+            }
+            chartAnnotation.append("line")
+              .attr("x1",width-147+adjustWidth)
+              .attr("x2",width-10)
+              .attr("y1",height/2+25)
+              .attr("y2",height/2+25)
+              .attr("class","swarm-annnotation-line")
+              .attr("marker-end", function(d){
+                return "url(#arrow-head)"
+              })
+              ;
+
+            chartAnnotation.append("text")
+              .attr("x",width-147+adjustWidth)
+              .attr("y",height/2+25)
+              .attr("class","swarm-annnotation-text")
+              .text(function(d){
+                if(cut == "Race"){
+                  return "More People of Color";
+                }
+                return "More Women";
+              })
+              ;
+
+          }
+
+          var chartAverage = svg.append("g")
+             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+             .attr("class","swarm-average")
+             ;
+
+         chartAverage.append("text")
+           .attr("class","swarm-average-text swarm-average-text-label")
+           .attr("x", function() {
+           		if (cut == "Gender") {
+           			return 	percentScale(d3.mean(percentagesByCompany, function(d) { return d.value.percentwomen}))
+           		} else {
+           			return 	parityScale(d3.mean(percentagesByCompany, function(d) { return d.value.parity}))
+           		}
+           	})
+           
+           .attr("y",height*.2-22)
+           .text("Average")
+
+          chartAverage.append("text")
+            .attr("class","swarm-average-text")
+             .attr("x", function() {
+           		if (cut == "Gender") {
+           			return 	percentScale(d3.mean(percentagesByCompany, function(d) { return d.value.percentwomen}))
+           		} else {
+           			return 	parityScale(d3.mean(percentagesByCompany, function(d) { return d.value.parity}))
+           		}
+           	})
+            .attr("y",height*.2-7)
+            .text(function(){
+              if(cut == "Race"){
+                return Math.round((Math.abs(parityAverage))*100)+" pts. over-represented white"
+              }
+              return Math.round((1-womenAverage)*100)+"% Male"
+            })
+
+          chartAverage.append("line")
+            .attr("class","swarm-average-line")
+            .attr("x1", function() {
+           		if (cut == "Gender") {
+           			return 	percentScale(d3.mean(percentagesByCompany, function(d) { return d.value.percentwomen}))
+           		} else {
+           			return 	parityScale(d3.mean(percentagesByCompany, function(d) { return d.value.parity}))
+           		}
+           	})
+            .attr("x2", function() {
+           		if (cut == "Gender") {
+           			return 	percentScale(d3.mean(percentagesByCompany, function(d) { return d.value.percentwomen}))
+           		} else {
+           			return 	parityScale(d3.mean(percentagesByCompany, function(d) { return d.value.parity}))
+           		}
+           	})
+            .attr("y1",height*.2)
+            .attr("y2",height*.8)
+            ;
+           }
+
 
 }) 
 
