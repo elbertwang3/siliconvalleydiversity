@@ -1,7 +1,7 @@
-text {
-	font-family: 'Avenir Next';
-	font-size: 14px;
+@font-face {
+    font-family: 'Roboto';
 }
+
 
 .wrapper {
 	margin-left: auto;
@@ -184,4 +184,11 @@ h5 {
   color: black;
   box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
   border-color: #dad9e3;
+}
+
+.swarm-axis-tick-text {
+    font-family: 'Roboto';
+    font-size: 12px;
+    dominant-baseline: central;
+    font-weight: 500;
 }
