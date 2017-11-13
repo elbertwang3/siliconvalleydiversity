@@ -6,6 +6,7 @@ var toggles = d3.select(".container").append("div")
     .attr("class","histogram-chart-toggle-wrapper");
 var cut = "Gender";
 var midPoint;
+var cellImages;
 
 var viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -66,7 +67,6 @@ d3.csv('data/data.csv', type, function(error, data) {
           return false;
         })
         cut = d;
-        console.log(d);
         updateChart();
       });
 
@@ -135,21 +135,17 @@ d3.csv('data/data.csv', type, function(error, data) {
 
 	var circleScale = d3.scaleLinear()
    						.domain(d3.extent(percentagesByCompany, function(d) { return d.value.total;}))
-   						.range([3, 30])
+   						.range([3, 40])
 
 	//x.domain(d3.extent(percentagesByCompany, function(d) { return d.value.percentmen; }));
 	percentScale.domain([0,1]);
 	//parityScale.domain(d3.extent(percentagesByCompany, function(d) { return d.value.parity; }));
 	parityScale.domain([-0.8,0.8])
 	
-	
+	buildAxis()
 	var simulation = d3.forceSimulation(percentagesByCompany)
       	.force("x", d3.forceX(function(d) { 
-	      	/*if (cut == "Gender") {
-	      		return percentScale(d.value.percentmen); 
-	     	} else {
-	     		return parityScale(d.value.parity); 
-	     	}*/
+	      
 	     	return percentScale(d.value.percentwomen); 
 	     }).strength(1))
       .force("y", d3.forceY(height / 2))
@@ -159,137 +155,59 @@ d3.csv('data/data.csv', type, function(error, data) {
     
     for (var i = 0; i < 120; ++i) simulation.tick();
 
-   	/*chartAxis = g.append("g")
-      .attr("class", "axis axis--x")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(percentScale));*/
-
    	var cell = chartg.append("g")
       .attr("class", "cells")
       .selectAll("g").data(percentagesByCompany)
       .enter().append("g")
       .attr("class","swarm-cell-g");
-    /*.selectAll("g").data(d3.voronoi()
-        .extent([[-margin.left, -margin.top], [width + margin.right, height + margin.top]])
-        .x(function(d) { return d.x; })
-        .y(function(d) { return d.y; })
-      .polygons(percentagesByCompany)).enter().append("g");*/
+    
 
     var cellCircle = cell.append("circle")
      .attr("class","swarm-circle")
       .attr("r", function(d) { 
-      	//console.log(d); 
       	return circleScale(d.value.total);
-      	//return 3;
       })
       .attr("cx", function(d) { return d.x; })
       .attr("cy", function(d) { return d.y; })
       .style("fill", function(d) { return genderColorScale(d.value.percentwomen);})
       .style("stroke", function(d) { return d3.color(genderColorScale(d.value.percentwomen)).darker(1);})
 
-    
-    midPoint = d3.mean(tickData)
-    var ticks = chartAxisContainer
-            .append("g")
-            .attr("class","swarm-axis-tick-container")
-            .selectAll("g")
-            .data(tickData)
-            .enter()
-            .append("g")
-            .attr("class","swarm-axis-tick-g");
+     var cellImages = cell.append("g")
 
-    ticks
-        .append("line")
-        .style("stroke",function(d){
-          return genderColorScale(d);
+        .attr("transform",function(d,i){
+          return "translate(" + (d.x-circleScale(d.value.total)/1.5) + "," + (d.y-circleScale(d.value.total)/1.5) + ")";
         })
-        .attr("x1",function(d){
-          return percentScale(d);
-        })
-        .attr("x2",function(d){
-          return percentScale(d);
-        })
-        .attr("y1",function(d,i){
-          if(d==midPoint){
-            return height/2;
-          }
-          return 0
-        })
-        .attr("y2",function(d){
-          if(d==midPoint){
-            return 0;
-          }
-          return height*.05;
-        })
-        .attr("class","swarm-axis-tick");
+        .attr("class","swarm-image-container")
+    cellImages.append("image")
 
-    ticks
-        .append("text")
-        .attr("x",function(d){
-        	console.log(cut);
-        	if (cut == "Gender") {
-          		return percentScale(d);
-          	} else {
-          		return parityScale(d);
-          	}
+        .attr("class","swarm-image")
+        .attr("xlink:href",function(d){
+          if(d.key == "Google"){
+            return "images/google-logo.svg.png"
+          }
+          if(d.key == "Apple"){
+            return "images/apple-logo.svg.png"
+          }
+          if(d.key == "Facebook"){
+            return "images/facebook-logo.svg.png"
+          }
+          if(d.key == "Cisco"){
+            return "images/cisco-logo.svg"
+          }
+          return null;
         })
-        .attr("y",-9)
-        .attr("class","swarm-axis-tick-text")
-        .style("text-anchor",function(d,i){
-          if(i==0){
-            return "start"
-          }
-        
-          else if(i==tickData.length-1){
-            return "end"
-          }
-          return "middle";
+        .attr("width",function(d){
+          return circleScale(d.value.total)*2*.7;
         })
-        .style("fill",function(d,i){
-          if(d==midPoint){
-            return "#888";
-          }
-          return genderColorScale(d);
-        })
-        .text(function(d,i){
-          if(i==0){
-            if(cut == "race"){
-              if(viewportWidth < 450){
-                return "+"+Math.floor(Math.abs(d)*100)+" pts. White";
-              }
-              return "More white vs. Bay Area"
-            }
-            return Math.floor((1-d)*100)+"% Male Employees"
-          }
-          if(i==tickData.length-1){
-            if(cut == "race"){
-              if(viewportWidth < 450){
-                return "+"+Math.floor(Math.abs(d)*100)+" pts. Non-white";
-              }
-              return "More people of color vs. Bay Area"
-            }
-            return Math.floor(d*100)+"% Female Employees"
-          }
-          if(d==midPoint){
-            if(cut == "race"){
-              return "Parity with Bay Area demographics"
-            }
-            return "50/50 Split";
-          }
-          if(d<midPoint){
-            if(cut == "race"){
-              return "+"+Math.floor(Math.abs(d)*100)+" pts.";
-            }
-            return Math.floor((1-d)*100)+"%";
-          }
-          if(cut == "race"){
-            return "+"+Math.floor(Math.abs(d)*100)+" pts.";
-          }
-          return Math.floor(d*100)+"%";
+        .attr("height",function(d){
+          return circleScale(d.value.total)*2*.7;
         });
 
+    //updateChart()
+ 
       function updateChart() {
-
+      	buildAxis()
+      
       	var simulation = d3.forceSimulation(percentagesByCompany)
           .force("x", d3.forceX(function(d) {
            if (cut == "Gender") {
@@ -329,9 +247,21 @@ d3.csv('data/data.csv', type, function(error, data) {
 	     	}
 	     
       	})
+      	 cellImages.transition().duration(500)
 
+        .attr("transform",function(d,i){
+          return "translate(" + (d.x-circleScale(d.value.total)/1.5) + "," + (d.y-circleScale(d.value.total)/1.5) + ")";
+        })
+        .attr("class","swarm-image-container")
+ 
 
+      	
 
+		
+	}
+	function buildAxis() {
+
+	
       	if (cut == "Gender") {
       		tickData = [0,.25,.5,.75,1];
       	} else {
@@ -344,8 +274,11 @@ d3.csv('data/data.csv', type, function(error, data) {
           .duration(500)
           .style("opacity",0)
           .on("end",function(d){
+          	console.log("getting here?");
             d3.select(this).remove();
           });
+
+       	
 
       	var chartAxisContainer = chartAxis.append("g")
       	if (cut == "Gender") {
@@ -353,18 +286,26 @@ d3.csv('data/data.csv', type, function(error, data) {
           	} else {
           		midPoint = 0;
           	}
-      	console.log(midPoint);
 	    var ticks = chartAxisContainer
-	            .append("g")
-	            .attr("class","swarm-axis-tick-container")
-	            .selectAll("g")
-	            .data(tickData)
-	            .enter()
-	            .append("g")
-	            .attr("class","swarm-axis-tick-g");
+            .append("g")
 
+            .attr("class","swarm-axis-tick-container")
+            .selectAll("g")
+            .data(tickData)
+            .enter()
+            .append("g")
+            .attr("class","swarm-axis-tick-g");
+	    
+	    chartAxisContainer.append("line")
+	    	.style("stroke", "#dddddd")
+	    	.attr("x1", 0)
+	    	.attr("x2", width)
+	    	.attr("y1", height/2)
+	    	.attr("y2", height/2)
+	    	.attr("class", "center-line")
 	    ticks
 	        .append("line")
+	        
 	        .style("stroke",function(d){
 	          
 	          if (cut == "Gender") {
@@ -400,6 +341,7 @@ d3.csv('data/data.csv', type, function(error, data) {
 	          return height*.05;
 	        })
 	        .attr("class","swarm-axis-tick");
+	   
 
 	    ticks
 	        .append("text")
@@ -469,8 +411,7 @@ d3.csv('data/data.csv', type, function(error, data) {
 	          return Math.floor(d*100)+"%";
 	        });
 
-		
-	}
+		}
 
 }) 
 
