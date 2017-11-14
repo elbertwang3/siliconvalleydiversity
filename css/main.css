@@ -411,6 +411,10 @@ h5 {
 }
 
 
+.swarm-image {
+    pointer-events: none;
+    /* transform: translate(-50%,-50%); */
+}
 
 
 

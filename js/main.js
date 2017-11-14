@@ -238,7 +238,7 @@ d3.csv('data/data.csv', type, function(error, data) {
           return "translate(" + (d.x-circleScale(d.value.total)/1.5) + "," + (d.y-circleScale(d.value.total)/1.5) + ")";
         })
         .attr("class","swarm-image-container")
-   /* cellImages.append("image")
+    cellImages.append("image")
 
         .attr("class","swarm-image")
         .attr("xlink:href",function(d){
@@ -267,7 +267,15 @@ d3.csv('data/data.csv', type, function(error, data) {
         })
         .attr("height",function(d){
           return circleScale(d.value.total)*2*.7;
-        });*/
+        })
+        /* .on("mouseover",function(d){
+          var data = d;
+          mouseOverEvents(data,d3.select(this));
+        })
+        .on("mouseout",function(d){
+          var data = d;
+          mouseOutEvents(data,d3.select(this));
+        })*/
 
     //updateChart()
  
