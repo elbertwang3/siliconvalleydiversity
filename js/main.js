@@ -10,7 +10,7 @@ var midPoint;
 var cellImages;
 var highlightedStrokeColor = "#555555"
     var highlightedCircleStrokeDarkness = 2;
-      var mouseoverOffsetX = 20;
+      var mouseoverOffsetX = 30;
   var mouseoverOffsetY = -14;
 var mobile = false;
 if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
@@ -668,51 +668,52 @@ d3.csv('data/data.csv', type, function(error, data) {
             }
           }
           if(cutData == "staff"){
-            
+            	
               if(d=="white"){
-                return Math.round(data.value.percentwhite)*100+"%";
+              	console.log(data.value.percentwhite);
+                return Math.round(data.value.percentwhite*100)+"%";
               }
               if(d=="black"){
-                return Math.round(data.value.percentblack)*100+"%";
+                return Math.round(data.value.percentblack*100)+"%";
               }
               if(d=="hisp."){
-                return Math.round(data.value.percentlatino)*100+"%";
+                return Math.round(data.value.percentlatino*100)+"%";
               }
               if(d=="asian"){
-                return Math.round(data.value.percentasian)*100+"%";
+                return Math.round(data.value.percentasian*100)+"%";
               }
                if(d=="am. ind."){
-                return Math.round(data.value.percentamerindian)*100+"%";
+                return Math.round(data.value.percentamerindian*100)+"%";
               }
                if(d=="mixed"){
-                return Math.round(data.value.percentmixed)*100+"%";
+                return Math.round(data.value.percentmixed*100)+"%";
               }
               if(d=="female"){
-                return Math.round(data.value.percentwomen)*100+"%";
+                return Math.round(data.value.percentwomen*100)+"%";
               }
             
           }
           if(cutData = "leaders"){
              if(d=="white"){
-                return Math.round(data.value.percentwhiteleaders)*100+"%";
+                return Math.round(data.value.percentwhiteleaders*100)+"%";
               }
               if(d=="black"){
-                return Math.round(data.value.percentblackleaders)*100+"%";
+                return Math.round(data.value.percentblackleaders*100)+"%";
               }
               if(d=="hisp."){
-                return Math.round(data.value.percentlatinoleaders)*100+"%";
+                return Math.round(data.value.percentlatinoleaders*100)+"%";
               }
               if(d=="asian"){
-                return Math.round(data.value.percentasianleaders)*100+"%";
+                return Math.round(data.value.percentasianleaders*100)+"%";
               }
                if(d=="am. ind."){
-                return Math.round(data.value.percentamerindianleaders)*100+"%";
+                return Math.round(data.value.percentamerindianleaders*100)+"%";
               }
                if(d=="mixed"){
-                return Math.round(data.value.percentmixedleaders)*100+"%";
+                return Math.round(data.value.percentmixedleaders*100)+"%";
               }
               if(d=="female"){
-                return Math.round(data.value.percentwhiteleaders)*100+"%";
+                return Math.round(data.value.percentwomenleaders*100)+"%";
               }
           }
           return "tbd";
@@ -739,7 +740,7 @@ d3.csv('data/data.csv', type, function(error, data) {
             if(viewportWidth < 450 || mobile){
               return "0px";
             }
-            return data.x + data.value.radius + mouseoverOffsetX +"px";
+            return data.x + circleScale(data.value.total) + mouseoverOffsetX +"px";
           })
       }
       /*else if(chartType == "swarm-scatter"){
