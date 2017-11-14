@@ -97,6 +97,11 @@ h5 {
   fill: red;
 }
 
+/*.swarm-circle:hover {
+    stroke: rgba(0, 0, 0, 0.69); 
+    stroke-width: 1.8px; 
+}*/
+
 .histogram-chart-toggle-type{
   display: -webkit-box;
   display: -ms-flexbox;
@@ -234,4 +239,179 @@ h5 {
     /* text-shadow: 0 2px 0 #ffffff, 2px 0 0 #ffffff, 0 -2px 0 #ffffff, -2px 0 0 #ffffff; */
     letter-spacing: .2px;
 }
+
+.swarm-chart-tool-tip {
+    position: absolute;
+    font-family: 'Roboto';
+    font-size: 14px;
+    text-transform: capitalize;
+    background: white;
+    border: 1px solid rgba(193, 193, 193, 0.8);
+    z-index: 1000000000;
+    border-radius: 4px;
+    text-align: left;
+    width: auto;
+    font-weight: 600;
+    color: #353535;
+    visibility: hidden;
+    min-width: 120px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.12);
+    pointer-events: all;
+}
+
+.swarm-chart-tool-tip div:last-of-type{
+  border-bottom:none;
+}
+
+.swarm-chart-tool-tip-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content:center;
+  justify-content: center;
+  margin: 0 auto;
+  width: auto;
+  width: 190px;
+}
+
+.swarm-chart-tool-tip-label{
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 24px;
+}
+
+.swarm-chart-race-col .swarm-chart-tool-tip-label {
+    border-bottom: 1px solid #ccc;
+}
+
+.swarm-chart-tool-tip-company {
+    margin-bottom: 5px;
+    border-bottom: 1px solid #cdcdcd;
+    padding: 0px 25px;
+    text-align: center;
+    line-height: 26px;
+}
+
+.swarm-chart-tool-tip-gender {
+    font-size: 16px;
+}
+
+
+.swarm-chart-tool-tip-gender span {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 11px;
+}
+
+
+.swarm-chart-tool-tip-gender-label {}
+
+.swarm-chart-race-col {width: 65px;}
+
+.swarm-chart-tool-tip-race-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+
+.swarm-chart-tool-tip-race-text {
+    line-height: 24px;
+    font-size: 16px;
+    text-align: right;
+    border-bottom: 1px solid #ccc;
+}
+
+.swarm-chart-race-col {
+}
+
+.swarm-chart-race-col-race-text {
+  -webkit-flex-grow:1;
+    flex-grow: 1;
+}
+
+
+.swarm-text {
+    font-family: 'Roboto';
+    font-size: 11px;
+    /* text-transform: capitalize; */
+    font-weight: 400;
+    fill: rgba(0, 0, 0, 0.8);
+    -webkit-transform: translate(-7px,1px);
+    transform: translate(-7px,1px);
+    dominant-baseline: middle;
+    text-shadow: 0 2px 0 #ffffff, 2px 0 0 #ffffff, 0 -2px 0 #ffffff, -2px 0 0 #ffffff;
+    text-anchor: end;
+    pointer-events: none;
+}
+
+.swarm-chart-tool-tip-row{
+    margin-left: 69px;
+    margin-right: 20px;
+    margin-bottom: -5px;
+  
+}
+
+.swarm-chart-tool-tip-row:first-of-type{
+  border-top:1px solid #cccccc;
+  padding-top: 2px;
+  margin-top: 30px;
+}
+
+.swarm-chart-tool-tip-row:last-of-type{
+
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+
+
+.swarm-chart-tool-tip-col {}
+
+.swarm-chart-tool-tip-text {
+    width: 37px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 13px;
+    text-align: center;
+    color: black;
+}
+
+.swarm-chart-tool-tip-col-label {
+    position: absolute;
+    top: 41px;
+    font-size: 11px;
+    color: #808080;
+    font-weight: 500;
+}
+
+
+.swarm-chart-tool-tip-row-label {
+    font-size: 12px;
+    color: #848484;
+    font-weight: 400;
+    position: absolute;
+    left: 2px;
+    text-align: right;
+    width: 60px;
+}
+
+.swarm-chart-tool-tip-row-label span{
+  position: absolute;
+  top: -13px;
+  width: 284px;
+  left: 14px;
+  /* font-style: italic; */
+  font-size: 10px;
+  color: #323232;
+  font-weight: 600;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+
+
+
+
 
