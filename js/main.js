@@ -12,8 +12,8 @@ var midPoint;
 var cellImages;
 var highlightedStrokeColor = "#555555"
     var highlightedCircleStrokeDarkness = 2;
-      var mouseoverOffsetX = 30;
-  var mouseoverOffsetY = -14;
+      var mouseoverOffsetX = -15;
+  var mouseoverOffsetY = -120;
 var mobile = false;
 if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
   mobile = true;
@@ -389,6 +389,9 @@ height = 350 - margin.top - margin.bottom;
           })
           .attr("class","swarm-image-container")
         } else if (currentChart == "swarm-scatter") {
+          console.log("getting called again")
+          console.log(cut);
+
           chartAxis
             .select("g")
             .transition()
@@ -434,6 +437,14 @@ height = 350 - margin.top - margin.bottom;
 
 
             cellCircle
+                 .on("mouseover",function(d){
+          var data = d;
+          mouseOverEvents(data,d3.select(this));
+        })
+        .on("mouseout",function(d){
+          var data = d;
+          mouseOutEvents(data,d3.select(this));
+        })
         .transition()
         .duration(500)
         .delay(function(d,i){
@@ -442,22 +453,35 @@ height = 350 - margin.top - margin.bottom;
         })
         .style("opacity",1)
         .attr("cx", function(d) {
-          if(cut == "race"){
-            return xScale(d.value.percentwhite+d.value.percentblack+d.value.percentlatino+d.value.percentasian+d.value.percentamerindian+d.value.percentmixed);
+          if(cut == "Race"){
+            return xScale(d.value.percentblack+d.value.percentlatino+d.value.percentasian+d.value.percentamerindian+d.value.percentmixed);
+          } else {
+            return xScale(d.value.percentwomen);
           }
-          return xScale(d.value.percentwomen);
         })
         .attr("r", function(d){
           return circleScale(d.value.total);
         })
         .attr("cy", function(d) {
           if(cut == "race"){
-            return yScale(d.value.percentwhiteleaders+d.value.percentblackleaders+d.value.percentlatinoleaders+d.value.percentasianleaders+d.value.percentamerindianleaders+d.value.percentmixedleaders);
+            return yScale(d.value.percentblackleaders+d.value.percentlatinoleaders+d.value.percentasianleaders+d.value.percentamerindianleaders+d.value.percentmixedleaders);
+          } else {
+            return yScale(d.value.percentwomenleaders);
           }
-          return yScale(d.value.percentwomenleaders);
-        });
+        })
+        ;
 
-          
+          cellImages.transition().duration(500)
+
+          .attr("transform",function(d,i){
+            if (cut == "Race") {
+              return "translate(" + (xScale(d.value.percentblack+d.value.percentlatino+d.value.percentasian+d.value.percentamerindian+d.value.percentmixed)-circleScale(d.value.total)/1.5) + "," + (yScale(d.value.percentblackleaders+d.value.percentlatinoleaders+d.value.percentasianleaders+d.value.percentamerindianleaders+d.value.percentmixedleaders)-circleScale(d.value.total)/1.5) + ")";
+            } else {
+              return "translate(" + (xScale(d.value.percentwomen) -circleScale(d.value.total)/1.5)+ "," + (yScale(d.value.percentwomenleaders) -circleScale(d.value.total)/1.5) +")";
+            }
+            
+          })
+          .attr("class","swarm-image-container")
         }
         buildAxis()
         buildAverage()
@@ -698,12 +722,12 @@ height = 350 - margin.top - margin.bottom;
           .selectAll("text")
           .data(function(){
             if(viewportWidth < 450){
-              if(cut=="race"){
+              if(cut=="Race"){
                 return ["← More White","Staff Race","More Non-white →"]
               }
               return ["← More Male Staff","Staff Gender","More Female Staff →"]
             }
-            if(cut=="race"){
+            if(cut=="Race"){
               return ["← More White","Staff Race","More People of Color →"]
             }
             return ["← More Male Staff","Staff Gender","More Female Staff →"]
@@ -746,7 +770,7 @@ height = 350 - margin.top - margin.bottom;
           .append("g")
           .selectAll("text")
           .data(function(){
-            if(cut=="race"){
+            if(cut=="Race"){
               return [{text:"75% Leaders are Not White",value:.75},{text:"Leaders: 50-50 White/Non-White",value:.5},{text:"25% Non-White",value:.25},{text:"0% Non-White Leaders",value:.0}]
             }
             return [{text:"75% Leaders are Women",value:.75},{text:"65% Female",value:.65},{text:"Leaders: 50-50 Male/Female",value:.5},{text:"35% Female",value:.35},{text:"25% Leaders are Female",value:.25}]
@@ -963,7 +987,6 @@ height = 350 - margin.top - margin.bottom;
           if(cutData == "staff"){
             	
               if(d=="white"){
-              	console.log(data.value.percentwhite);
                 return Math.round(data.value.percentwhite*100)+"%";
               }
               if(d=="black"){
@@ -1014,7 +1037,7 @@ height = 350 - margin.top - margin.bottom;
         .attr("class","swarm-chart-tool-tip-text")
         ;
 
-      if(currentChart == "swarm" || currentChart == "new"){
+      if(currentChart == "swarm" || currentChart == "swarm-scatter"){
 
         element.style("stroke",function(){
           return "black";
@@ -1027,13 +1050,13 @@ height = 350 - margin.top - margin.bottom;
             if(viewportWidth < 450 || mobile){
               return "0px";
             }
-            return data.y + mouseoverOffsetY +"px"
+            return (d3.event.pageY) + mouseoverOffsetY +"px"
           })
           .style("left",function(d){
             if(viewportWidth < 450 || mobile){
               return "0px";
             }
-            return data.x + circleScale(data.value.total) + mouseoverOffsetX +"px";
+            return (d3.event.pageX) + circleScale(data.value.total) + mouseoverOffsetX +"px";
           })
       }
       /*else if(chartType == "swarm-scatter"){
