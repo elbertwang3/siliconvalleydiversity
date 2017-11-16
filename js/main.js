@@ -1,7 +1,7 @@
 var svg = d3.select("svg"),
 margin = {top: 40, right: 40, bottom: 40, left: 40},
-width = svg.attr("width") - margin.left - margin.right,
-height = svg.attr("height") - margin.top - margin.bottom;
+width = 1000 - margin.left - margin.right,
+height = 350 - margin.top - margin.bottom;
 
 var cut = "Gender";
 var previousChart = "swarm";
@@ -18,7 +18,8 @@ var mobile = false;
 if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
   mobile = true;
 }
-
+var xScale;
+var yScale;
 var viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
@@ -111,7 +112,7 @@ d3.csv('data/data.csv', type, function(error, data) {
       })
       .on("click",function(d){
 
-        previousChart = currentChart;
+        //previousChart = currentChart;
         var dataSelected = d;
         d3.select(this.parentNode).selectAll("p").classed("toggle-selected",function(d){
           if(d==dataSelected){
@@ -119,45 +120,10 @@ d3.csv('data/data.csv', type, function(error, data) {
           }
           return false;
         })
-        currentChart = d;
-        //updateChart();
+        cut = d;
+        updateChart();
       });
-  /*toggles
-    .append("div")
-    .attr("class","histogram-chart-toggle-type")
-    .selectAll("p")
-    .data(["All Staff","Leadership"])
-    .enter()
-    .append("p")
-    .attr("class","histogram-chart-toggle-item")
-    .text(function(d){
-      return d;
-    })
-     .attr("class",function(d,i){
-        if(i==0){
-          return "toggle-selected front-curve histogram-chart-toggle-item";
-        }
-        if(i==1){
-          return "back-curve histogram-chart-toggle-item";
-        }
-        return "histogram-chart-toggle-item";
-      })
-      .text(function(d){
-        return d;
-      })
-      .on("click",function(d){
 
-
-        var dataSelected = d;
-        d3.select(this.parentNode).selectAll("p").classed("toggle-selected",function(d){
-          if(d==dataSelected){
-            return true;
-          }
-          return false;
-        })
-        char = d;
-        //updateChart();
-      });*/
 
   var stepperContainerToggleContainerSteps = stepperContainerToggleContainer
       .selectAll("div")
@@ -177,44 +143,13 @@ d3.csv('data/data.csv', type, function(error, data) {
         return "<span class='stepper-text'>"+stepNumToText[i]+"</span>";
         // return i+1;
       })
-      /*.on("mouseover",function(d,i){
-        var item = i;
-        var dataSelected = d;
-        stepperContainerToggleContainerHover
-          .style("visibility",function(d,i){
-            if (d == dataSelected && !mobile){
-              return "visible"
-            }
-            return null;
-          })
-          .html(function(){
-            return toggleText[item];
-          })
-          ;
-      })
-      .on("mouseout",function(){
-        stepperContainerToggleContainerHover.style("visibility",null);
-      })*/
       .on("click",function(d,i){
 
-       // embedLinkText.text("Embed this chart");
-        //embedLinkInput.style("display",null);
 
-        //urlParameter.set('view', i);
-
+        previousChart = currentChart;
         var num = i;
 
-        // stepperText
-        //   .transition()
-        //   .duration(500)
-        //   .style("opacity",0)
-        //   .on("end",function(){
-        //     stepperText.text(stepperTextArray[i])
-        //       .transition()
-        //       .duration(500)
-        //       .style("opacity",1)
-        //       ;
-        //   });
+ 
 
         var dataSelected = d;
         d3.select(this.parentNode).selectAll(".stepper-item").classed("stepper-item-selected",function(d,i){
@@ -224,7 +159,8 @@ d3.csv('data/data.csv', type, function(error, data) {
           return false;
         })
         currentChart = d;
-        //buildChart(d);
+        console.log(currentChart);
+        updateChart()
       });
 
 
@@ -399,54 +335,132 @@ d3.csv('data/data.csv', type, function(error, data) {
     //updateChart()
  
     function updateChart() {
-      	buildAxis()
-      	buildAverage()
-      	var simulation = d3.forceSimulation(percentagesByCompany)
-          .force("x", d3.forceX(function(d) {
-           if (cut == "Gender") {
-	      		return percentScale(d.value.percentwomen); 
-	     	} else {
-	     		return parityScale(d.value.parity); 
-	     	}
+      	margin = {top: 40, right: 40, bottom: 40, left: 40},
+width = 1000 - margin.left - margin.right,
+height = 350 - margin.top - margin.bottom;
+        svg
+              .attr("width", width)
+              .attr("height", height)
+        if (currentChart == "swarm") {
+        	var simulation = d3.forceSimulation(percentagesByCompany)
+            .force("x", d3.forceX(function(d) {
+             if (cut == "Gender") {
+  	      		return percentScale(d.value.percentwomen); 
+  	     	} else {
+  	     		return parityScale(d.value.parity); 
+  	     	}
+            })
+            .strength(1))
+            .force("y", d3.forceY(height / 2))
+            .force("collide", d3.forceCollide().radius(function(d) { return circleScale(d.value.total) + 2; }))
+            .stop();
+
+
+             for (var i = 0; i < 120; ++i) simulation.tick();
+          cellCircle
+          .transition()
+          .duration(500)
+
+          .attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; })
+        	.attr("r", function(d){
+            	return circleScale(d.value.total);
           })
-          .strength(1))
-          .force("y", d3.forceY(height / 2))
-          .force("collide", d3.forceCollide().radius(function(d) { return circleScale(d.value.total) + 2; }))
-          .stop();
+          .style("fill", function(d) { 
+          	if (cut == "Gender") {
+  	      		return genderColorScale(d.value.percentwomen); 
+  	     	} else {
+  	     		return raceColorScale(d.value.parity); 
+  	     	}
+          })
+        	.style("stroke", function(d) { 
+        		if (cut == "Gender") {
+  	      		return d3.color(genderColorScale(d.value.percentwomen)).darker(1); 
+  	     	} else {
+  	     		return d3.color(raceColorScale(d.value.parity)).darker(1); 
+  	     	}
+  	     
+        	})
+
+        	 cellImages.transition().duration(500)
+
+          .attr("transform",function(d,i){
+            return "translate(" + (d.x-circleScale(d.value.total)/1.5) + "," + (d.y-circleScale(d.value.total)/1.5) + ")";
+          })
+          .attr("class","swarm-image-container")
+        } else if (currentChart == "swarm-scatter") {
+          chartAxis
+            .select("g")
+            .transition()
+            .duration(250)
+            .style("opacity",0)
+            .on("end",function(d){
+              d3.select(this).remove();
+              //buildAxis();
+            });
+      // }
+          //newToggleForRaceAndGender.classed("swarm-scatter-selected",true);
+            margin = {top: 0, right: 20, bottom: 60, left: 20};
+            width = 680 - margin.left - margin.right;
+            if(viewportWidth < 680){
+              margin = {top: 30, right: 20, bottom: 60, left: 20};
+              width = viewportWidth - margin.left - margin.right;
+            }
+            height = 575 - margin.top - margin.bottom;
+            if(viewportWidth < 680){
+              height = 475 - margin.top - margin.bottom;
+            }
+            svg
+              .attr("width", width+margin.left+margin.right)
+              .attr("height", height+margin.top+margin.bottom)
+
+            xScale = d3.scaleLinear().domain([0,1]).range([0,width]).clamp(true);
+            yScale = d3.scaleLinear().domain([0,1]).range([height,0]).clamp(true);
+            if(cut == "race"){
+              //xScale.domain([0,.85]).range([0,width]).clamp(true);
+              //yScale.domain([0,.85]).range([height,0]).clamp(true);
+              //newsNestAverageT1 = d3.mean(newsNest,function(d){ return getPercentType("raceStaff",d.value)});
+              //newsNestSupAverageT1 = d3.mean(newsNest,function(d){ return getPercentType("supWhite",d.value)});
+            }
+            else{
+              //xScale = d3.scaleLinear().domain([.2,.8]).range([0,width]).clamp(true);
+              //yScale = d3.scaleLinear().domain([.2,.8]).range([height,0]).clamp(true);
+              /*if(extentOverride[0] <.2){
+                xScale.domain([extentOverride[0],.8])
+              }*/
+              //newsNestAverageT1 = d3.mean(newsNest,function(d){ return getPercentType("genderStaff",d.value)});
+              //newsNestSupAverageT1 = d3.mean(newsNest,function(d){ return getPercentType("supGender",d.value)});
+            }
 
 
-           for (var i = 0; i < 120; ++i) simulation.tick();
-        cellCircle
+            cellCircle
         .transition()
         .duration(500)
-
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; })
-      	.attr("r", function(d){
-          	return circleScale(d.value.total);
+        .delay(function(d,i){
+          
+          return 100;
         })
-        .style("fill", function(d) { 
-        	if (cut == "Gender") {
-	      		return genderColorScale(d.value.percentwomen); 
-	     	} else {
-	     		return raceColorScale(d.value.parity); 
-	     	}
+        .style("opacity",1)
+        .attr("cx", function(d) {
+          if(cut == "race"){
+            return xScale(d.value.percentwhite+d.value.percentblack+d.value.percentlatino+d.value.percentasian+d.value.percentamerindian+d.value.percentmixed);
+          }
+          return xScale(d.value.percentwomen);
         })
-      	.style("stroke", function(d) { 
-      		if (cut == "Gender") {
-	      		return d3.color(genderColorScale(d.value.percentwomen)).darker(1); 
-	     	} else {
-	     		return d3.color(raceColorScale(d.value.parity)).darker(1); 
-	     	}
-	     
-      	})
-
-      	 cellImages.transition().duration(500)
-
-        .attr("transform",function(d,i){
-          return "translate(" + (d.x-circleScale(d.value.total)/1.5) + "," + (d.y-circleScale(d.value.total)/1.5) + ")";
+        .attr("r", function(d){
+          return circleScale(d.value.total);
         })
-        .attr("class","swarm-image-container")
+        .attr("cy", function(d) {
+          if(cut == "race"){
+            return yScale(d.value.percentwhiteleaders+d.value.percentblackleaders+d.value.percentlatinoleaders+d.value.percentasianleaders+d.value.percentamerindianleaders+d.value.percentmixedleaders);
+          }
+          return yScale(d.value.percentwomenleaders);
+        });
+
+          
+        }
+        buildAxis()
+        buildAverage()
  
 
       	
@@ -455,7 +469,7 @@ d3.csv('data/data.csv', type, function(error, data) {
 	}
 	function buildAxis() {
 
-		
+		  if (currentChart == "swarm") {
       	if (cut == "Gender") {
       		tickData = [0,.25,.5,.75,1];
       	} else {
@@ -468,7 +482,6 @@ d3.csv('data/data.csv', type, function(error, data) {
           .duration(500)
           .style("opacity",0)
           .on("end",function(d){
-          	console.log("getting here?");
             d3.select(this).remove();
           });
 
@@ -607,10 +620,161 @@ d3.csv('data/data.csv', type, function(error, data) {
 	          }
 	          return Math.floor(d*100)+"%";
 	        });
+      } else if (currentChart == "swarm-scatter") {
+        var chartAxisContainer = chartAxis.append("g")
+
+        var chartAxisLines = chartAxisContainer.append("g")
+
+        chartAxisLines
+          .append("g")
+          .attr("class","swarm-scatter-rect-gender-g")
+          .append("line")
+          .attr("class","swarm-scatter-rect-gender-line")
+          .attr("x1",0)
+          .attr("x2",width)
+          .attr("y1",function(d){
+            return height/2;
+          })
+          .attr("y2",function(d){
+            return height/2;
+          })
+          .style("visibility",function(){
+            if(cut=="race"){
+              return "hidden"
+            }
+            return null;
+          })
+          ;
+
+        chartAxisLines
+         .append("g")
+         .attr("class","swarm-scatter-x-axis-lines")
+         .selectAll("line")
+         .data(function(){
+           if(cut=="race"){
+             return [.1,.3,.5,.7]
+           }
+           return [.25,.35,.45,.55,.65,.75];
+         })
+         .enter()
+         .append("line")
+         .attr("x1",function(d){
+           return xScale(d);
+         })
+         .attr("x2",function(d){
+           return xScale(d);
+         })
+         .attr("y1",0)
+         .attr("y2",height)
+         .attr("class","swarm-axis-line")
+         ;
+
+        chartAxisLines.append("g")
+          .attr("class","swarm-scatter-y-axis-lines")
+          .selectAll("line")
+          .data(function(){
+            if(cut=="race"){
+              return [.1,.3,.5,.7];
+            }
+            return [.3,.5,.4,.6,.7];
+          })
+          .enter()
+          .append("line")
+          .attr("x1",0)
+          .attr("x2",width)
+          .attr("y1",function(d){
+            return yScale(d);
+          })
+          .attr("y2",function(d){
+            return yScale(d);
+          })
+          .attr("class","swarm-axis-line")
+          ;
+
+        var chartAxisText = chartAxisContainer.append("g")
+
+        chartAxisText
+          .append("g")
+          .selectAll("text")
+          .data(function(){
+            if(viewportWidth < 450){
+              if(cut=="race"){
+                return ["← More White","Staff Race","More Non-white →"]
+              }
+              return ["← More Male Staff","Staff Gender","More Female Staff →"]
+            }
+            if(cut=="race"){
+              return ["← More White","Staff Race","More People of Color →"]
+            }
+            return ["← More Male Staff","Staff Gender","More Female Staff →"]
+          })
+          .enter()
+          .append("text")
+          .attr("x",function(d,i){
+            if(i==0){
+              return 0;
+            }
+            if(i==1){
+              return width/2;
+            }
+            return width;
+          })
+          .attr("y",function(d,i){
+            return height
+          })
+          .attr("class",function(d,i){
+            if(i!=1){
+              return "swarm-axis-tick-text scatter-axis-chart-text scatter-axis-chart-side"
+            }
+            return "swarm-axis-tick-text scatter-axis-chart-text";
+          })
+          .text(function(d){
+            return d;
+          })
+          .style("text-anchor",function(d,i){
+            if(i==0){
+              return "start"
+            }
+            if(i!=1){
+              return "end";
+            }
+            return "middle"
+          })
+          ;
+
+        chartAxisText
+          .append("g")
+          .selectAll("text")
+          .data(function(){
+            if(cut=="race"){
+              return [{text:"75% Leaders are Not White",value:.75},{text:"Leaders: 50-50 White/Non-White",value:.5},{text:"25% Non-White",value:.25},{text:"0% Non-White Leaders",value:.0}]
+            }
+            return [{text:"75% Leaders are Women",value:.75},{text:"65% Female",value:.65},{text:"Leaders: 50-50 Male/Female",value:.5},{text:"35% Female",value:.35},{text:"25% Leaders are Female",value:.25}]
+          })
+          .enter()
+          .append("text")
+          .attr("transform","translate("+(width-10)+",0)")
+          .attr("y",function(d,i){
+            return yScale(d.value);
+          })
+          .attr("class",function(d,i){
+            return "swarm-axis-tick-text scatter-axis-chart-text-y";
+          })
+          .style("text-anchor",function(d,i){
+            return "end"
+          })
+          .text(function(d){
+            return d.text;
+          })
+          .attr("dy",0)
+          .call(wrap,95)
+          ;
+      }
+      
 
 		}
 		function buildAverage(){
-
+        if (currentChart == "swarm") {
           svg.select(".swarm-average").remove();
           svg.select(".swarm-annnotation").remove();
 
@@ -618,7 +782,7 @@ d3.csv('data/data.csv', type, function(error, data) {
              .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
              .attr("class","swarm-annnotation")
              ;
-           console.log("getting here");
+          
           if(!mobile && viewportWidth > 550){
             var adjustWidth = 0;
             if(viewportWidth < 650){
@@ -701,8 +865,10 @@ d3.csv('data/data.csv', type, function(error, data) {
            		}
            	})
             .attr("y1",height*.2)
-            .attr("y2",height*.8)
-            ;
+            .attr("y2",height*.8);
+          } else if (currentChart == "swarm-scatter") {
+
+          }
            }
 
 
