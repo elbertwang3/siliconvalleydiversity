@@ -67,6 +67,22 @@ h5 {
 	text-align: center;
 }
 
+.chart-top-section {
+  width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content:center;
+    justify-content: center;
+    margin-bottom: 21px;
+    max-width: 1000px;
+    margin: 0 auto;
+    margin-top: 18px;
+    margin-bottom: 18px;
+    position: relative;
+    pointer-events: all;
+}
 
 /*p {
 	font-family: Garamond;
@@ -95,6 +111,7 @@ h5 {
 
 .cells :hover circle {
   fill: red;
+  cursor: pointer;
 }
 
 /*.swarm-circle:hover {
@@ -112,6 +129,29 @@ h5 {
   position: absolute;
   left: 0px;
 }
+
+.histogram-chart-toggle-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+    /* justify-content: center; */
+    font-family: 'Atlas Grotesk Web';
+    /* position: absolute; */
+    /* left: 0px; */
+    /* right: 0px; */
+    /* top: 0px; */
+    /* width: 500px; */
+    /* margin: 0 auto; */
+    -webkit-order:1;
+    order: 1;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    -webkit-justify-content:center;
+    justify-content: center;
+}
+
 
 .histogram-chart-toggle-item{
        margin-right: 10px;
@@ -293,59 +333,7 @@ h5 {
     line-height: 26px;
 }
 
-.swarm-chart-tool-tip-gender {
-    font-size: 16px;
-}
 
-
-.swarm-chart-tool-tip-gender span {
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 11px;
-}
-
-
-.swarm-chart-tool-tip-gender-label {}
-
-.swarm-chart-race-col {width: 65px;}
-
-.swarm-chart-tool-tip-race-container {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-}
-
-
-.swarm-chart-tool-tip-race-text {
-    line-height: 24px;
-    font-size: 16px;
-    text-align: right;
-    border-bottom: 1px solid #ccc;
-}
-
-.swarm-chart-race-col {
-}
-
-.swarm-chart-race-col-race-text {
-  -webkit-flex-grow:1;
-    flex-grow: 1;
-}
-
-
-.swarm-text {
-    font-family: 'Roboto';
-    font-size: 11px;
-    /* text-transform: capitalize; */
-    font-weight: 400;
-    fill: rgba(0, 0, 0, 0.8);
-    -webkit-transform: translate(-7px,1px);
-    transform: translate(-7px,1px);
-    dominant-baseline: middle;
-    text-shadow: 0 2px 0 #ffffff, 2px 0 0 #ffffff, 0 -2px 0 #ffffff, -2px 0 0 #ffffff;
-    text-anchor: end;
-    pointer-events: none;
-}
 
 .swarm-chart-tool-tip-row{
     margin-left: 69px;
@@ -414,6 +402,89 @@ h5 {
 .swarm-image {
     pointer-events: none;
     /* transform: translate(-50%,-50%); */
+}
+
+.stepper-container {
+    font-family: 'Roboto';
+    font-size: 14px;
+    font-weight: 500;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-justify-content:center;
+    justify-content: center;
+    margin: 0 auto;
+}
+.stepper-item-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+    margin-left: 15px;
+    line-height: 23px;
+    position: relative;
+    /* transform: translate(calc(-32px),0px); */
+    -webkit-order:3;
+    order: 3;
+}
+
+.stepper-toggle-row {
+    width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content:center;
+    justify-content: center;
+    margin-bottom: 21px;
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    pointer-events: all;
+}
+
+.stepper-item {
+    cursor: hand;
+    cursor: pointer;
+    opacity: 1;
+    font-size: 11.5px;
+    font-weight: 400;
+    position: relative;
+    line-height: 17px;
+    /* margin-top: 3px; */
+    color: #9a9a9a;
+    padding-left: 4px;
+    text-transform: capitalize;
+    /* text-decoration: underline; */
+    position: relative;
+    border: 1px solid rgba(127, 125, 156, 0.29);
+    line-height: 23px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    font-size: 12px;
+    padding: 0 7px;
+    margin-left: -13px;
+    background: white;
+    margin-right: 10px;
+    color: black;
+}
+
+.stepper-item-selected {
+    color: black;
+    opacity: 1;
+    font-weight: 600;
+    text-decoration: none;
+    font-weight: 500;
+    background-color: #F5F5F5;
+    color: black;
+    box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+    border-color: #dad9e3;
 }
 
 

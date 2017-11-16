@@ -2,10 +2,12 @@ var svg = d3.select("svg"),
 margin = {top: 40, right: 40, bottom: 40, left: 40},
 width = svg.attr("width") - margin.left - margin.right,
 height = svg.attr("height") - margin.top - margin.bottom;
-var toggles = d3.select(".container").append("div")
-    .attr("class","histogram-chart-toggle-wrapper");
+
 var cut = "Gender";
-var chartType = "swarm"
+var previousChart = "swarm";
+var currentChart = "swarm";
+var stepperSequence = ["swarm","swarm-scatter"]
+var stepNumToText = ["All Staff","Leadership"]
 var midPoint;
 var cellImages;
 var highlightedStrokeColor = "#555555"
@@ -31,6 +33,7 @@ var tickData = [0,.25,.5,.75,1];
 var raceColorScale = d3.scaleLinear().domain([-0.8,0,.8]).range(["#2161fa","#dddddd","#ff3333"]);
 
 
+  var container = d3.select(".swarm");
 var chartg = svg.append("g")
 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 	.attr("class", "chart-g");
@@ -42,7 +45,7 @@ var chartAxis = svg.append("g")
 
 var chartAxisContainer = chartAxis.append("g")
 
-var chartDivContainer = d3.select(".container")
+var chartDivContainer = d3.select(".svgcontainer")
     .append("div")
     .attr("class","swarm-chart-container")
     .style("width",width+margin.left+margin.right+"px")
@@ -52,8 +55,20 @@ var chartToolTip = chartDivContainer
     .style("transform", "translate(" + margin.left+"px" + "," + margin.top+"px" + ")")
     .on("click",function(){
       chartToolTip.style("visibility",null);
-    })
-    ;
+    });
+
+ var chartTopSection = container.append("div")
+    .attr("class","chart-top-section");
+    var toggles = chartTopSection.append("div")
+    .attr("class","histogram-chart-toggle-wrapper");
+var stepperContainer = chartTopSection.append("div")
+      .attr("class","stepper-container")
+var stepperContainerToggle = stepperContainer.append("div")
+      .attr("class","stepper-toggle-row");
+var stepperContainerToggleContainer = stepperContainerToggle
+      .append("div")
+      .attr("class","stepper-item-container")
+
 
 var defs = svg.append("svg:defs")
 defs
@@ -96,6 +111,42 @@ d3.csv('data/data.csv', type, function(error, data) {
       })
       .on("click",function(d){
 
+        previousChart = currentChart;
+        var dataSelected = d;
+        d3.select(this.parentNode).selectAll("p").classed("toggle-selected",function(d){
+          if(d==dataSelected){
+            return true;
+          }
+          return false;
+        })
+        currentChart = d;
+        //updateChart();
+      });
+  /*toggles
+    .append("div")
+    .attr("class","histogram-chart-toggle-type")
+    .selectAll("p")
+    .data(["All Staff","Leadership"])
+    .enter()
+    .append("p")
+    .attr("class","histogram-chart-toggle-item")
+    .text(function(d){
+      return d;
+    })
+     .attr("class",function(d,i){
+        if(i==0){
+          return "toggle-selected front-curve histogram-chart-toggle-item";
+        }
+        if(i==1){
+          return "back-curve histogram-chart-toggle-item";
+        }
+        return "histogram-chart-toggle-item";
+      })
+      .text(function(d){
+        return d;
+      })
+      .on("click",function(d){
+
 
         var dataSelected = d;
         d3.select(this.parentNode).selectAll("p").classed("toggle-selected",function(d){
@@ -104,8 +155,76 @@ d3.csv('data/data.csv', type, function(error, data) {
           }
           return false;
         })
-        cut = d;
-        updateChart();
+        char = d;
+        //updateChart();
+      });*/
+
+  var stepperContainerToggleContainerSteps = stepperContainerToggleContainer
+      .selectAll("div")
+      .data(stepperSequence)
+      .enter()
+      .append("div")
+      .attr("class",function(d,i){
+        if(i==0){
+          return "stepper-item stepper-item-selected";
+        }
+        return "stepper-item";
+      })
+      .html(function(d,i){
+        if(i==4){
+          return "<span class='stepper-text'>"+stepNumToText[i]+"</span>";
+        }
+        return "<span class='stepper-text'>"+stepNumToText[i]+"</span>";
+        // return i+1;
+      })
+      /*.on("mouseover",function(d,i){
+        var item = i;
+        var dataSelected = d;
+        stepperContainerToggleContainerHover
+          .style("visibility",function(d,i){
+            if (d == dataSelected && !mobile){
+              return "visible"
+            }
+            return null;
+          })
+          .html(function(){
+            return toggleText[item];
+          })
+          ;
+      })
+      .on("mouseout",function(){
+        stepperContainerToggleContainerHover.style("visibility",null);
+      })*/
+      .on("click",function(d,i){
+
+       // embedLinkText.text("Embed this chart");
+        //embedLinkInput.style("display",null);
+
+        //urlParameter.set('view', i);
+
+        var num = i;
+
+        // stepperText
+        //   .transition()
+        //   .duration(500)
+        //   .style("opacity",0)
+        //   .on("end",function(){
+        //     stepperText.text(stepperTextArray[i])
+        //       .transition()
+        //       .duration(500)
+        //       .style("opacity",1)
+        //       ;
+        //   });
+
+        var dataSelected = d;
+        d3.select(this.parentNode).selectAll(".stepper-item").classed("stepper-item-selected",function(d,i){
+          if(i==num){
+            return true;
+          }
+          return false;
+        })
+        currentChart = d;
+        //buildChart(d);
       });
 
 
@@ -545,7 +664,7 @@ d3.csv('data/data.csv', type, function(error, data) {
            		}
            	})
            
-           .attr("y",height*.1-22)
+           .attr("y",height*.2-30)
            .text("Average")
 
           chartAverage.append("text")
@@ -557,7 +676,7 @@ d3.csv('data/data.csv', type, function(error, data) {
            			return 	parityScale(d3.mean(percentagesByCompany, function(d) { return d.value.parity}))
            		}
            	})
-            .attr("y",height*.1-7)
+            .attr("y",height*.2-15)
             .text(function(){
               if(cut == "Race"){
                 return Math.round((Math.abs(parityAverage))*100)+" pts. over-represented white"
@@ -581,7 +700,7 @@ d3.csv('data/data.csv', type, function(error, data) {
            			return 	parityScale(d3.mean(percentagesByCompany, function(d) { return d.value.parity}))
            		}
            	})
-            .attr("y1",height*.1)
+            .attr("y1",height*.2)
             .attr("y2",height*.8)
             ;
            }
@@ -619,7 +738,7 @@ d3.csv('data/data.csv', type, function(error, data) {
             var cityString = "Bay Area";
             return "census<span>"+cityString+"</span>"
           }
-          if(d.cut == "staff" && chartType != "swarm-scatter"){
+          if(d.cut == "staff" && currentChart != "swarm-scatter"){
             return "all"
           }
           return d.cut;
@@ -729,7 +848,7 @@ d3.csv('data/data.csv', type, function(error, data) {
         .attr("class","swarm-chart-tool-tip-text")
         ;
 
-      if(chartType == "swarm" || chartType == "new"){
+      if(currentChart == "swarm" || currentChart == "new"){
 
         element.style("stroke",function(){
           return "black";
