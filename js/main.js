@@ -775,14 +775,14 @@ chartAxis
           .data(function(){
             if(viewportWidth < 450){
               if(cut=="Race"){
-                return ["← More White","Staff Race","More Non-white →"]
+                return ["← More White","Employee Race","More Non-white →"]
               }
-              return ["← More Male Staff","Staff Gender","More Female Staff →"]
+              return ["← More Male Employees","Employee Gender","More Female Employees →"]
             }
             if(cut=="Race"){
-              return ["← More White","Staff Race","More People of Color →"]
+              return ["← More White","Employee Race","More People of Color →"]
             }
-            return ["← More Male Staff","Staff Gender","More Female Staff →"]
+            return ["← More Male Employees","Employee Gender","More Female Employees →"]
           })
           .enter()
           .append("text")
@@ -1024,9 +1024,9 @@ chartAxis
           .attr("class","swarm-scatter-regression-annotation-text")
           .text(function(){
             if(cut=="Race"){
-              return "Newsrooms with racially diverse leadership tend to have a racially diverse staff"
+              return "Companies with racially diverse leadership tend to have more racially diverse employees"
             }
-            return "Newsrooms with female leadership tend to have more women on staff"
+            return "Companies with female leadership tend to have more female employees"
           })
           .attr("transform","translate("+-40+","+-55+")")
           .attr("dy",0)
@@ -1359,14 +1359,21 @@ chartAxis
       chartToolTip
         .style("visibility",null)
         ;
-         element.style("stroke",function(d){
-          if (cut == "Gender") {
-	      		return d3.color(genderColorScale(d.value.percentwomen)).darker(1); 
-	     	} else {
-	     		return d3.color(raceColorScale(d.value.parity)).darker(1); 
-	     	}
-        })
-        ;
+        
+     
+          element.style("stroke",function(d) {
+            if (currentChart == "swarm") {
+              if (cut == "Gender") {
+    	      		return d3.color(genderColorScale(d.value.percentwomen)).darker(1); 
+      	     	} else {
+      	     		return d3.color(raceColorScale(d.value.parity)).darker(1); 
+      	     	}
+            } else {
+              return null;
+            }
+
+          }) 
+        
 
       /*if(chartType == "swarm" || chartType == "new"){
 
