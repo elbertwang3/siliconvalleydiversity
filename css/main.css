@@ -537,6 +537,24 @@ h5 {
     dominant-baseline: middle;
 }
 
+.swarm-scatter-regression-annotation-text {
+    font-family: 'Roboto';
+    text-anchor: end;
+    font-size: 12px;
+    text-shadow: 0 2px 0 #ffffff, 2px 0 0 #ffffff, 0 -2px 0 #ffffff, -2px 0 0 #ffffff;
+    pointer-events: none;
+}
 
+.swarm-scatter-regression-line {
+    stroke: rgba(253, 204, 0, 0.61);
+    stroke-width: 3px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+}
+
+.swarm-scatter-regression-annotation-line{
+  stroke:black;
+}
 
 
