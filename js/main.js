@@ -499,7 +499,9 @@ chartAxis
           return circleScale(d.value.total);
         })
         .attr("cy", function(d) {
-          if(cut == "race"){
+          console.log("getting here");
+          if(cut == "Race"){
+            console.log(d.value.percentblackleaders+d.value.percentlatinoleaders+d.value.percentasianleaders+d.value.percentamerindianleaders+d.value.percentmixedleaders);
             return yScale(d.value.percentblackleaders+d.value.percentlatinoleaders+d.value.percentasianleaders+d.value.percentamerindianleaders+d.value.percentmixedleaders);
           } else {
             return yScale(d.value.percentwomenleaders);
@@ -511,7 +513,8 @@ chartAxis
 
           .attr("transform",function(d,i){
             if (cut == "Race") {
-              return "translate(" + (xScale(d.value.percentblack+d.value.percentlatino+d.value.percentasian+d.value.percentamerindian+d.value.percentmixed)-circleScale(d.value.total)/1.5) + "," + (yScale(d.value.percentblackleaders+d.value.percentlatinoleaders+d.value.percentasianleaders+d.value.percentamerindianleaders+d.value.percentmixedleaders)-circleScale(d.value.total)/1.5) + ")";
+              return "translate(" + (xScale(d.value.percentblack+d.value.percentlatino+d.value.percentasian+d.value.percentamerindian+d.value.percentmixed)-circleScale(d.value.total)/1.5) + "," + 
+                (yScale(d.value.percentblackleaders+d.value.percentlatinoleaders+d.value.percentasianleaders+d.value.percentamerindianleaders+d.value.percentmixedleaders)-circleScale(d.value.total)/1.5) + ")";
             } else {
               return "translate(" + (xScale(d.value.percentwomen) -circleScale(d.value.total)/1.5)+ "," + (yScale(d.value.percentwomenleaders) -circleScale(d.value.total)/1.5) +")";
             }
@@ -1180,11 +1183,9 @@ function wrap(text, width) {
         y = text.attr("y"),
         dy = parseFloat(text.attr("dy")),
         tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em").style("font-weight", 500);
-        console.log(words)
     while (word = words.pop()) {
 
       line.push(word);
-           console.log(line);
       tspan.text(line.join(" "));
       if (tspan.node().getComputedTextLength() > width) {
         line.pop();
