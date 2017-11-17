@@ -1,8 +1,34 @@
 @font-face {
     font-family: 'Roboto';
 }
+.article {
+  display: block;
+}
+.content-title {
+    font-size: 45px;
+    font-family: 'Roboto';
+    font-weight: 300;
+    margin: 0px;
+    color: rgba(0, 0, 0, 0.77);
+    margin-top: -6px;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -.5px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+.stepper-container-text {
+    font-size: 14px;
+    font-weight: 300;
+    color: #222;
+    /* color: black; */
+    line-height: 20px;
+    margin-bottom: 13px;
+    margin-top: 6px;
+    font-family: 'Roboto';
+      max-width: 500px;
+    margin: 0 auto;
 
-
+}
 .wrapper {
 	margin-left: auto;
 	margin-right: auto;
@@ -10,13 +36,11 @@
 }
 
 .head {
-	text-align:center;
-	width: 1440px;
+
 }
 .headline {
-	display:inline-block;
-	text-align: center;
-	width: 750px;
+	    max-width: 600px;
+    margin: 0 auto;
 
 }
 
@@ -61,11 +85,7 @@ h5 {
 .content {
  	margin-top: 30px;
 }
-.article {
-	width: 1440px;
-	display: inline-block;
-	text-align: center;
-}
+
 
 .chart-top-section {
   width: 100%;
@@ -555,6 +575,27 @@ h5 {
 
 .swarm-scatter-regression-annotation-line{
   stroke:black;
+}
+
+.chart-title {
+    font-size: 13px;
+    font-family: 'Roboto';
+    text-align: center;
+    font-weight: 400;
+    color: #2f2e2e;
+    text-align: left;
+    margin: 0 auto;
+    /* position: absolute; */
+    /* top: 4px; */
+    text-align: center;
+    font-weight: 500;
+    margin-bottom: -16px;
+    line-height: 25px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    /* text-decoration: underline; */
+    /* display: inline; */
+    /* margin: 0 auto; */
 }
 
 

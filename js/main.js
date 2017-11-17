@@ -1,10 +1,11 @@
 var svg = d3.select("svg"),
 margin = {top: 40, right: 40, bottom: 40, left: 40},
 width = 1000 - margin.left - margin.right,
-height = 350 - margin.top - margin.bottom;
+height = 325 - margin.top - margin.bottom;
 svg
-  .attr("width", width + 80)
-  .attr("height", height);
+  .attr("viewBox", "0 0 " + (width + margin.right+margin.left) + " " + (height+margin.top+margin.bottom))
+  .attr("width", width + margin.right+margin.left)
+  .attr("height", height+margin.top+margin.bottom);
 var cut = "Gender";
 var previousChart = "swarm";
 var currentChart = "swarm";
@@ -52,6 +53,7 @@ var chartDivContainer = d3.select(".svgcontainer")
     .append("div")
     .attr("class","swarm-chart-container")
     .style("width",width+margin.left+margin.right+"px")
+
 var chartToolTip = chartDivContainer
     .append("div")
     .attr("class","swarm-chart-tool-tip")
@@ -179,6 +181,10 @@ d3.csv('data/data.csv', type, function(error, data) {
         updateChart()
       });
 
+      var chartTitle = d3.select(".swarm")
+                .append("p")
+                .attr("class", "chart-title")
+                .html("Company Gender Breakdown")
 
 	men = data.filter(function(d) { return d.gender == "male"});
 	women = data.filter(function(d) { return d.gender == "female"});
@@ -351,77 +357,104 @@ d3.csv('data/data.csv', type, function(error, data) {
     //updateChart()
  
     function updateChart() {
-        if (currentChart == "swarm" && previousChart == "swarm-scatter") {
-          margin = {top: 40, right: 40, bottom: 40, left: 40},
-          width = 1000 - margin.left - margin.right,
-          height = 350 - margin.top - margin.bottom;
-            svg
-              .transition()
-              .duration(500)
-              .attr("width", width+ 80)
-              .attr("height", height)
-                 chartg
-            .transition()
-            .duration(500)
-  .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-  .attr("class", "chart-g");
-
-chartAxis
-    .transition()
-    .duration(500)
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    .attr("class","swarm-axis");
-        } else if (currentChart == "swarm-scatter" && previousChart == "swarm") {
-           margin = {top: 0, right: 20, bottom: 60, left: 20};
-            width = 680 - margin.left - margin.right;
-            if(viewportWidth < 680){
-              margin = {top: 30, right: 20, bottom: 60, left: 20};
-              width = viewportWidth - margin.left - margin.right;
-            }
-            height = 575 - margin.top - margin.bottom;
-            if(viewportWidth < 680){
-              height = 475 - margin.top - margin.bottom;
-            }
-            svg
-              .transition()
-              .duration(500)
-              .attr("width", width + margin.right + margin.left)
-              .attr("height", height + margin.bottom + margin.top+20)
-
-            chartg
-            .transition()
-            .duration(500)
-  .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-  .attr("class", "chart-g");
-
-chartAxis
-    .transition()
-    .duration(500)
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    .attr("class","swarm-axis");
-
+      viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+      if (currentChart == "swarm" && previousChart == "swarm-scatter") {
+        margin = {top: 40, right: 40, bottom: 40, left: 40};
+        width = 1000 - margin.left - margin.right;
+        height = 325 - margin.top - margin.bottom;
+        if(viewportWidth < 1000){
+          console.log("getting here");
+          margin = {top: 40, right: 20, bottom: 40, left: 20};
+          width = viewportWidth - margin.left - margin.right;
+          height = 300 - margin.bottom - margin.top;
         }
-      	
-        if (currentChart == "swarm") {
-        	var simulation = d3.forceSimulation(percentagesByCompany)
-            .force("x", d3.forceX(function(d) {
-             if (cut == "Gender") {
-  	      		return percentScale(d.value.percentwomen); 
-  	     	} else {
-  	     		return parityScale(d.value.parity); 
-  	     	}
-            })
-            .strength(1))
-            .force("y", d3.forceY(height / 2))
-            .force("collide", d3.forceCollide().radius(function(d) { return circleScale(d.value.total) + 1; }))
-            .stop();
 
-
-             for (var i = 0; i < 120; ++i) simulation.tick();
-          cellCircle
+        
+        
+        svg
+          .attr("viewBox", "0 0 " + (width+margin.left+margin.top) + " " + (height+margin.top+margin.bottom))
           .transition()
           .duration(500)
+          .attr("width", width+margin.left+margin.top)
+          .attr("height", height+margin.top+margin.bottom)
+               
+        chartg
+          .transition()
+          .duration(500)
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+          .attr("class", "chart-g");
 
+        chartAxis
+            .transition()
+            .duration(500)
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .attr("class","swarm-axis");
+      } else if (currentChart == "swarm-scatter" && previousChart == "swarm") {
+        margin = {top: 30, right: 20, bottom: 60, left: 20};
+        width = 680 - margin.left - margin.right;
+        if(viewportWidth < 680){
+          margin = {top: 30, right: 20, bottom: 60, left: 20};
+          console.log("getting here");
+          width = viewportWidth - margin.left - margin.right;
+        }
+        height = 575 - margin.top - margin.bottom;
+        if(viewportWidth < 680){
+          height = 475 - margin.top - margin.bottom;
+        }
+        svg
+         .attr("viewBox", "0 0 " + (width + margin.right + margin.left) + " " + (height + margin.bottom + margin.top))
+          .transition()
+          .duration(500)
+          .attr("width", width + margin.right + margin.left)
+          .attr("height", height + margin.bottom + margin.top)
+
+        chartg
+          .transition()
+          .duration(500)
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+          .attr("class", "chart-g");
+
+        chartAxis
+          .transition()
+          .duration(500)
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+          .attr("class","swarm-axis");
+
+      }
+      	
+      if (currentChart == "swarm") {
+        percentScale = d3.scaleLinear().domain([0,1])
+.rangeRound([0, width]);
+
+parityScale = d3.scaleLinear().domain([-0.8,0.8])
+.rangeRound([0, width]);
+        if (cut == "Gender") {
+           chartTitle
+              .html("Company Gender Breakdown")
+        } else {
+          chartTitle
+              .html("Company Racial Diversity vs Bay Area")
+        }
+
+      	var simulation = d3.forceSimulation(percentagesByCompany)
+          .force("x", d3.forceX(function(d) {
+           if (cut == "Gender") {
+        		return percentScale(d.value.percentwomen); 
+         	} else {
+         		return parityScale(d.value.parity); 
+         	}})
+          .strength(1))
+          .force("y", d3.forceY(height / 2))
+          .force("collide", d3.forceCollide().radius(function(d) { return circleScale(d.value.total) + 1; }))
+          .stop();
+
+
+        for (var i = 0; i < 120; ++i) simulation.tick();
+        
+        cellCircle
+          .transition()
+          .duration(500)
           .attr("cx", function(d) { return d.x; })
           .attr("cy", function(d) { return d.y; })
         	.attr("r", function(d){
@@ -429,41 +462,44 @@ chartAxis
           })
           .style("fill", function(d) { 
           	if (cut == "Gender") {
-  	      		return genderColorScale(d.value.percentwomen); 
-  	     	} else {
-  	     		return raceColorScale(d.value.parity); 
-  	     	}
-          })
+          		return genderColorScale(d.value.percentwomen); 
+         	} else {
+         		return raceColorScale(d.value.parity); 
+         	}})
         	.style("stroke", function(d) { 
         		if (cut == "Gender") {
-  	      		return d3.color(genderColorScale(d.value.percentwomen)).darker(1); 
-  	     	} else {
-  	     		return d3.color(raceColorScale(d.value.parity)).darker(1); 
-  	     	}
-  	     
-        	})
+          		return d3.color(genderColorScale(d.value.percentwomen)).darker(1); 
+         	} else {
+         		return d3.color(raceColorScale(d.value.parity)).darker(1); 
+         	}})
 
-        	 cellImages.transition().duration(500)
-
+      	cellImages
+          .transition()
+          .duration(500)
           .attr("transform",function(d,i){
             return "translate(" + (d.x-circleScale(d.value.total)/1.5) + "," + (d.y-circleScale(d.value.total)/1.5) + ")";
           })
           .attr("class","swarm-image-container")
-        } else if (currentChart == "swarm-scatter") {
-          console.log("getting called again")
-          console.log(cut);
+      
+      } else if (currentChart == "swarm-scatter") {
+         if (cut == "Gender") {
+           chartTitle
+              .html("Company leadership vs employees by gender")
+        } else {
+          chartTitle
+              .html("Company leadership vs employees by race")
+        }
 
-          chartAxis
-            .select("g")
-            .transition()
-            .duration(250)
-            .style("opacity",0)
-            .on("end",function(d){
-              d3.select(this).remove();
-         
-            });
-      // }
-          //newToggleForRaceAndGender.classed("swarm-scatter-selected",true);
+
+        chartAxis
+          .select("g")
+          .transition()
+          .duration(250)
+          .style("opacity",0)
+          .on("end",function(d){
+            d3.select(this).remove();
+          });
+
 
 
             xScale = d3.scaleLinear().domain([0,1]).range([0,width]).clamp(true);
@@ -523,6 +559,10 @@ chartAxis
         ;
 
           cellImages.transition().duration(500)
+          .delay(function(d,i){
+          
+          return 100;
+        })
 
           .attr("transform",function(d,i){
             if (cut == "Race") {
@@ -663,25 +703,25 @@ chartAxis
 	        .text(function(d,i){
 	          if(i==0){
 	            if(cut == "Race"){
-	              if(viewportWidth < 450){
+	              if(viewportWidth < 800){
 	                return "+"+Math.floor(Math.abs(d)*100)+" pts. White";
 	              }
 	              return "More white vs. Bay Area"
 	            }
-	            return Math.floor((1-d)*100)+"% Male Employees"
+	            return Math.floor((1-d)*100)+"% Male"
 	          }
 	          if(i==tickData.length-1){
 	            if(cut == "Race"){
-	              if(viewportWidth < 450){
+	              if(viewportWidth < 800){
 	                return "+"+Math.floor(Math.abs(d)*100)+" pts. Non-white";
 	              }
 	              return "More people of color vs. Bay Area"
 	            }
-	            return Math.floor(d*100)+"% Female Employees"
+	            return Math.floor(d*100)+"% Female"
 	          }
 	          if(d==midPoint){
 	            if(cut == "Race"){
-	              return "Parity with Bay Area demographics"
+	              return "Parity with Bay Area"
 	            }
 	            return "50/50 Split";
 	          }
@@ -964,7 +1004,6 @@ chartAxis
           var slope = ssXY / ssXX;
           var intercept = yBar - (xBar * slope);
           var rSquare = Math.pow(ssXY, 2) / (ssXX * ssYY);
-          console.log({slope:slope,intercept:intercept,r2:rSquare})
           return {slope:slope,intercept:intercept,r2:rSquare};
         }
          var xValues = cellCircle.data().map(function(d){
@@ -1124,7 +1163,7 @@ chartAxis
          chartAnnotation.append("text")
            .style("transform",function(){
              if(cut == "Race"){
-               var transform = "translate("+20+"px,"+(yScale(.7)+10)+"px) rotate(270deg)";
+               var transform = "translate("+20+"px,"+(yScale(.75)+10)+"px) rotate(270deg)";
                return transform;
              }
              var transform = "translate("+20+"px,"+(yScale(.75)+10)+"px) rotate(270deg)";
@@ -1463,3 +1502,62 @@ function type(d) {
   d.count = +d.count;
   return d;
 }
+
+
+
+
+$(window).on("resize", function() {
+  viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  var bchart = $("#graph"),
+    baspect = bchart.width() / bchart.height(),
+    bcontainer = bchart.parent();
+  console.log(bchart.width())
+  console.log(bchart.height())
+  console.log('resizing')
+  var targetWidth;
+     if (currentChart == "swarm-scatter") {
+      if (viewportWidth <= 680) {
+        targetWidth = viewportWidth;
+        targetHeight = targetWidth / baspect;
+
+      } else {
+        console.log("at target already");
+        targetWidth = 680;
+        targetHeight = 575;
+
+      }
+
+    } else {
+
+      if (viewportWidth <= 1000) {
+        targetWidth = viewportWidth;
+        targetHeight = targetWidth / baspect;
+
+      } else {
+        targetWidth = 1000;
+        targetHeight = 325;
+
+      }
+    }
+  
+
+         
+    bchart.attr("width", targetWidth);
+    bchart.attr("height", targetHeight);
+    //bchart.attr("height", Math.round(targetWidth / baspect));
+    /*if (currentChart == "swarm") {
+       bchart.attr("height", 325);
+    } else {
+     
+      if(viewportWidth < 680){
+         bchart.attr("height", 475);
+      } else {
+         bchart.attr("height", 575);
+      }
+
+    }*/
+}).trigger("resize");
+
+
+
