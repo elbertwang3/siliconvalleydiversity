@@ -367,17 +367,20 @@ d3.csv('data/data.csv', type, function(error, data) {
           console.log("getting here");
           margin = {top: 40, right: 20, bottom: 40, left: 20};
           width = viewportWidth - margin.left - margin.right;
-          height = 300 - margin.bottom - margin.top;
+          height = viewportWidth*(325/1000) - margin.bottom - margin.top;
         }
 
         
         
         svg
-          .attr("viewBox", "0 0 " + (width+margin.left+margin.top) + " " + (height+margin.top+margin.bottom))
+          .attr("viewBox", "0 0 " +  (width+margin.left+margin.top) + " " + (height+margin.top+margin.bottom))
           .transition()
           .duration(500)
           .attr("width", width+margin.left+margin.top)
           .attr("height", height+margin.top+margin.bottom)
+
+             
+       
                
         chartg
           .transition()
@@ -393,21 +396,22 @@ d3.csv('data/data.csv', type, function(error, data) {
       } else if (currentChart == "swarm-scatter" && previousChart == "swarm") {
         margin = {top: 30, right: 20, bottom: 60, left: 20};
         width = 680 - margin.left - margin.right;
+        height = 575 - margin.top - margin.bottom;
         if(viewportWidth < 680){
           margin = {top: 30, right: 20, bottom: 60, left: 20};
           console.log("getting here");
           width = viewportWidth - margin.left - margin.right;
-        }
-        height = 575 - margin.top - margin.bottom;
-        if(viewportWidth < 680){
-          height = 475 - margin.top - margin.bottom;
+          height = viewportWidth*(575/680) - margin.top - margin.bottom;
         }
         svg
-         .attr("viewBox", "0 0 " + (width + margin.right + margin.left) + " " + (height + margin.bottom + margin.top))
+          .attr("viewBox", "0 0 " + (width+margin.left+margin.top) + " " + (height+margin.top+margin.bottom))
           .transition()
           .duration(500)
           .attr("width", width + margin.right + margin.left)
           .attr("height", height + margin.bottom + margin.top)
+
+     
+      
 
         chartg
           .transition()
@@ -424,6 +428,7 @@ d3.csv('data/data.csv', type, function(error, data) {
       }
       	
       if (currentChart == "swarm") {
+        console.log(width);
         percentScale = d3.scaleLinear().domain([0,1])
 .rangeRound([0, width]);
 
