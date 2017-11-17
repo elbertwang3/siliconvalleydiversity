@@ -1,8 +1,10 @@
 var svg = d3.select("svg"),
-margin = {top: 40, right: 40, bottom: 40, left: 40},
+margin = {top: 20, right: 40, bottom: 40, left: 40},
 width = 1000 - margin.left - margin.right,
 height = 350 - margin.top - margin.bottom;
-
+svg
+  .attr("width", width + 80)
+  .attr("height", height);
 var cut = "Gender";
 var previousChart = "swarm";
 var currentChart = "swarm";
@@ -159,6 +161,7 @@ d3.csv('data/data.csv', type, function(error, data) {
           return false;
         })
         currentChart = d;
+        console.log(previousChart);
         console.log(currentChart);
         updateChart()
       });
@@ -237,7 +240,7 @@ d3.csv('data/data.csv', type, function(error, data) {
 
 	var circleScale = d3.scaleLinear()
    						.domain(d3.extent(percentagesByCompany, function(d) { return d.value.total;}))
-   						.range([3, 40])
+   						.range([3, 25])
 
 	//x.domain(d3.extent(percentagesByCompany, function(d) { return d.value.percentmen; }));
 	percentScale.domain([0,1]);
@@ -255,7 +258,7 @@ d3.csv('data/data.csv', type, function(error, data) {
 	     	return percentScale(d.value.percentwomen); 
 	     }).strength(1))
       .force("y", d3.forceY(height / 2))
-      .force("collide", d3.forceCollide().radius(function(d) { return circleScale(d.value.total) + 2; }))
+      .force("collide", d3.forceCollide().radius(function(d) { return circleScale(d.value.total) +1; }))
       .stop();
 
     
@@ -335,12 +338,57 @@ d3.csv('data/data.csv', type, function(error, data) {
     //updateChart()
  
     function updateChart() {
-      	margin = {top: 40, right: 40, bottom: 40, left: 40},
-width = 1000 - margin.left - margin.right,
-height = 350 - margin.top - margin.bottom;
-        svg
-              .attr("width", width)
+        if (currentChart == "swarm" && previousChart == "swarm-scatter") {
+          margin = {top: 40, right: 40, bottom: 40, left: 40},
+          width = 1000 - margin.left - margin.right,
+          height = 350 - margin.top - margin.bottom;
+            svg
+              .transition()
+              .duration(500)
+              .attr("width", width+ 80)
               .attr("height", height)
+                 chartg
+            .transition()
+            .duration(500)
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+  .attr("class", "chart-g");
+
+chartAxis
+    .transition()
+    .duration(500)
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .attr("class","swarm-axis");
+        } else if (currentChart == "swarm-scatter" && previousChart == "swarm") {
+           margin = {top: 0, right: 20, bottom: 60, left: 20};
+            width = 680 - margin.left - margin.right;
+            if(viewportWidth < 680){
+              margin = {top: 30, right: 20, bottom: 60, left: 20};
+              width = viewportWidth - margin.left - margin.right;
+            }
+            height = 575 - margin.top - margin.bottom;
+            if(viewportWidth < 680){
+              height = 475 - margin.top - margin.bottom;
+            }
+            svg
+              .transition()
+              .duration(500)
+              .attr("width", width + margin.right + margin.left)
+              .attr("height", height + margin.bottom + margin.top+20)
+
+            chartg
+            .transition()
+            .duration(500)
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+  .attr("class", "chart-g");
+
+chartAxis
+    .transition()
+    .duration(500)
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .attr("class","swarm-axis");
+
+        }
+      	
         if (currentChart == "swarm") {
         	var simulation = d3.forceSimulation(percentagesByCompany)
             .force("x", d3.forceX(function(d) {
@@ -352,7 +400,7 @@ height = 350 - margin.top - margin.bottom;
             })
             .strength(1))
             .force("y", d3.forceY(height / 2))
-            .force("collide", d3.forceCollide().radius(function(d) { return circleScale(d.value.total) + 2; }))
+            .force("collide", d3.forceCollide().radius(function(d) { return circleScale(d.value.total) + 1; }))
             .stop();
 
 
@@ -403,19 +451,7 @@ height = 350 - margin.top - margin.bottom;
             });
       // }
           //newToggleForRaceAndGender.classed("swarm-scatter-selected",true);
-            margin = {top: 0, right: 20, bottom: 60, left: 20};
-            width = 680 - margin.left - margin.right;
-            if(viewportWidth < 680){
-              margin = {top: 30, right: 20, bottom: 60, left: 20};
-              width = viewportWidth - margin.left - margin.right;
-            }
-            height = 575 - margin.top - margin.bottom;
-            if(viewportWidth < 680){
-              height = 475 - margin.top - margin.bottom;
-            }
-            svg
-              .attr("width", width+margin.left+margin.right)
-              .attr("height", height+margin.top+margin.bottom)
+
 
             xScale = d3.scaleLinear().domain([0,1]).range([0,width]).clamp(true);
             yScale = d3.scaleLinear().domain([0,1]).range([height,0]).clamp(true);
@@ -1133,6 +1169,32 @@ height = 350 - margin.top - margin.bottom;
       }
 }) 
 
+function wrap(text, width) {
+  text.each(function() {
+    var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 1.05, // ems
+        y = text.attr("y"),
+        dy = parseFloat(text.attr("dy")),
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em").style("font-weight", 500);
+        console.log(words)
+    while (word = words.pop()) {
+
+      line.push(word);
+           console.log(line);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = text.append("tspan").style("font-size","12px").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+      }
+    }
+  });
+}
 
 
 

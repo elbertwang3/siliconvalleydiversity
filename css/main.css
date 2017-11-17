@@ -518,12 +518,23 @@ h5 {
   /* stroke: #E6E6E6; */
 }
 
-.swarm-axis-tick-text {
-    font-family: 'Roboto';
-    text-anchor: middle;
-    font-size: 12px;
-    dominant-baseline: central;
-    font-weight: 500;
+
+
+.scatter-axis-chart-text{
+  font-size: 13px;
+  font-weight: 600;
+  fill: #333;
+  -webkit-transform: translateY(20px);
+  transform: translateY(20px);
+  dominant-baseline: text-before-edge;
+  /* text-transform: uppercase; */
+}
+
+.scatter-axis-chart-text-y {
+    font-weight: 400;
+    font-size: 14px;
+    text-shadow: 0 2px 0 #ffffff, 2px 0 0 #ffffff, 0 -2px 0 #ffffff, -2px 0 0 #ffffff;
+    dominant-baseline: middle;
 }
 
 
