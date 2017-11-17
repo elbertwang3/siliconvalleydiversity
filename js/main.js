@@ -1,5 +1,5 @@
 var svg = d3.select("svg"),
-margin = {top: 20, right: 40, bottom: 40, left: 40},
+margin = {top: 40, right: 40, bottom: 40, left: 40},
 width = 1000 - margin.left - margin.right,
 height = 350 - margin.top - margin.bottom;
 svg
@@ -460,7 +460,7 @@ chartAxis
             .style("opacity",0)
             .on("end",function(d){
               d3.select(this).remove();
-              //buildAxis();
+         
             });
       // }
           //newToggleForRaceAndGender.classed("swarm-scatter-selected",true);
