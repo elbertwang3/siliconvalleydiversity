@@ -825,7 +825,7 @@ parityScale = d3.scaleLinear().domain([-0.8,0.8])
           .attr("class","swarm-axis-line")
           ;
 
-   
+
         var chartAxisText = chartAxisContainer.append("g")
 
         chartAxisText
@@ -836,12 +836,12 @@ parityScale = d3.scaleLinear().domain([-0.8,0.8])
               if(cut=="Race"){
                 return ["← More White","Employee Race","More Non-white →"]
               }
-              return ["← More Male Employees","Employee Gender","More Female Employees →"]
+              return ["← More Male","Employee Gender","More Female →"]
             }
             if(cut=="Race"){
               return ["← More White","Employee Race","More People of Color →"]
             }
-            return ["← More Male Employees","Employee Gender","More Female Employees →"]
+            return ["← More Male","Employee Gender","More Female →"]
           })
           .enter()
           .append("text")
