@@ -183,8 +183,6 @@ d3.csv('data/data.csv', type, function(error, data) {
           return false;
         })
         currentChart = d;
-        console.log(previousChart);
-        console.log(currentChart);
         updateChart()
       });
 
@@ -512,7 +510,7 @@ parityScale = d3.scaleLinear().domain([-0.8,0.8])
 
 
         chartAxis
-          .select("g")
+          .selectAll("g")
           .transition()
           .duration(250)
           .style("opacity",0)
@@ -613,7 +611,7 @@ parityScale = d3.scaleLinear().domain([-0.8,0.8])
       	}
 
       	chartAxis
-          .select("g")
+          .selectAll("g")
           .transition()
           .duration(500)
           .style("opacity",0)
@@ -1472,7 +1470,6 @@ parityScale = d3.scaleLinear().domain([-0.8,0.8])
     bcontainer = bchart.parent();
   console.log(bchart.width())
   console.log(bchart.height())
-  console.log('resizing')
   var targetWidth;
      if (currentChart == "swarm-scatter") {
       if (viewportWidth <= 680) {
@@ -1482,7 +1479,6 @@ parityScale = d3.scaleLinear().domain([-0.8,0.8])
     bchart.attr("height", targetHeight);
 
       } else {
-        console.log("at target already");
         targetWidth = 680;
         targetHeight = 575;
         //width = 680;
@@ -1501,7 +1497,6 @@ parityScale = d3.scaleLinear().domain([-0.8,0.8])
     bchart.attr("height", targetHeight);
 
       } else {
-        console.log("getting called");
          svg
           .attr("viewBox", "0 0 1000 325")
         targetWidth = 1000;
