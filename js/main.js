@@ -825,6 +825,14 @@ parityScale = d3.scaleLinear().domain([-0.8,0.8])
           .attr("class","swarm-axis-line")
           ;
 
+         chartAxisText
+          .select("g")
+          .transition()
+          .duration(500)
+          .style("opacity",0)
+          .on("end",function(d){
+            d3.select(this).remove();
+          });
         var chartAxisText = chartAxisContainer.append("g")
 
         chartAxisText
@@ -876,14 +884,7 @@ parityScale = d3.scaleLinear().domain([-0.8,0.8])
           })
           ;
 
-        chartAxisText
-          .select("g")
-          .transition()
-          .duration(500)
-          .style("opacity",0)
-          .on("end",function(d){
-            d3.select(this).remove();
-          });
+
 
         chartAxisText
           .append("g")
