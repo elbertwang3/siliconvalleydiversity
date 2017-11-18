@@ -1,7 +1,15 @@
+var viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 var svg = d3.select("svg"),
 margin = {top: 40, right: 40, bottom: 40, left: 40},
 width = 1000 - margin.left - margin.right,
 height = 325 - margin.top - margin.bottom;
+if(viewportWidth < 1000){
+          console.log("getting here");
+          margin = {top: 40, right: 20, bottom: 40, left: 20};
+          width = viewportWidth - margin.left - margin.right;
+          height = 300 - margin.bottom - margin.top;
+        }
 svg
   .attr("viewBox", "0 0 " + (width + margin.right+margin.left) + " " + (height+margin.top+margin.bottom))
   .attr("width", width + margin.right+margin.left)
@@ -23,8 +31,7 @@ if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.u
 }
 var xScale;
 var yScale;
-var viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
 
 var percentScale = d3.scaleLinear()
 .rangeRound([0, width]);
@@ -357,6 +364,14 @@ d3.csv('data/data.csv', type, function(error, data) {
     //updateChart()
  
     function updateChart() {
+      chartAxis
+          .selectAll("g")
+          .transition()
+          .duration(500)
+          .style("opacity",0)
+          .on("end",function(d){
+            d3.select(this).remove();
+          });
       viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
       viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
       if (currentChart == "swarm" && previousChart == "swarm-scatter") {
@@ -367,7 +382,7 @@ d3.csv('data/data.csv', type, function(error, data) {
           console.log("getting here");
           margin = {top: 40, right: 20, bottom: 40, left: 20};
           width = viewportWidth - margin.left - margin.right;
-          height = viewportWidth*(325/1000) - margin.bottom - margin.top;
+          height = 300 - margin.bottom - margin.top;
         }
 
         
@@ -1449,6 +1464,62 @@ parityScale = d3.scaleLinear().domain([-0.8,0.8])
           })
           ;*/
       }
+      $(window).on("resize", function() {
+  viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  var bchart = $("#graph"),
+    baspect = bchart.width() / bchart.height(),
+    bcontainer = bchart.parent();
+  console.log(bchart.width())
+  console.log(bchart.height())
+  console.log('resizing')
+  var targetWidth;
+     if (currentChart == "swarm-scatter") {
+      if (viewportWidth <= 680) {
+        targetWidth = viewportWidth;
+        targetHeight = targetWidth / baspect;
+                 bchart.attr("width", targetWidth);
+    bchart.attr("height", targetHeight);
+
+      } else {
+        console.log("at target already");
+        targetWidth = 680;
+        targetHeight = 575;
+        //width = 680;
+        //height = 575;
+        updateChart()
+
+
+      }
+
+    } else {
+
+      if (viewportWidth <= 1000) {
+        targetWidth = viewportWidth;
+        targetHeight = targetWidth / baspect;
+           bchart.attr("width", targetWidth);
+    bchart.attr("height", targetHeight);
+
+      } else {
+        console.log("getting called");
+         svg
+          .attr("viewBox", "0 0 1000 325")
+        targetWidth = 1000;
+        targetHeight = 325;
+        //height =325;
+        //width = 1000;
+        updateChart()
+       
+
+      }
+    }
+  
+
+         
+ 
+    //bchart.attr("height", Math.round(targetWidth / baspect));
+
+}).trigger("resize");
 }) 
 
 function wrap(text, width) {
@@ -1511,58 +1582,7 @@ function type(d) {
 
 
 
-$(window).on("resize", function() {
-  viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-  viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-  var bchart = $("#graph"),
-    baspect = bchart.width() / bchart.height(),
-    bcontainer = bchart.parent();
-  console.log(bchart.width())
-  console.log(bchart.height())
-  console.log('resizing')
-  var targetWidth;
-     if (currentChart == "swarm-scatter") {
-      if (viewportWidth <= 680) {
-        targetWidth = viewportWidth;
-        targetHeight = targetWidth / baspect;
 
-      } else {
-        console.log("at target already");
-        targetWidth = 680;
-        targetHeight = 575;
-
-      }
-
-    } else {
-
-      if (viewportWidth <= 1000) {
-        targetWidth = viewportWidth;
-        targetHeight = targetWidth / baspect;
-
-      } else {
-        targetWidth = 1000;
-        targetHeight = 325;
-
-      }
-    }
-  
-
-         
-    bchart.attr("width", targetWidth);
-    bchart.attr("height", targetHeight);
-    //bchart.attr("height", Math.round(targetWidth / baspect));
-    /*if (currentChart == "swarm") {
-       bchart.attr("height", 325);
-    } else {
-     
-      if(viewportWidth < 680){
-         bchart.attr("height", 475);
-      } else {
-         bchart.attr("height", 575);
-      }
-
-    }*/
-}).trigger("resize");
 
 
 
